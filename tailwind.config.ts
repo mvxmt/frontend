@@ -9,8 +9,17 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
+        background: "#1c1c1c",
         foreground: "var(--foreground)",
+        "btn-background": "#1e1e1e",
+        "delete": "#d24949",
+        "overlay": "#0f0f0f",
+        "secondary": "#cbcbcb",
+        "background-text": "#333333",
+        "icon": "#718096"
+      },
+      fontFamily: {
+        sans: ['var(--font-source-sans)'],
       },
     },
   },
