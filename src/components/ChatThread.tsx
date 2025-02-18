@@ -9,14 +9,17 @@ const Message: React.FC<{ message: ChatMessage }> = ({ message }) => {
       className={`rounded-xl bg-background-text p-4 ${message.role === "user" ? "self-end rounded-br-none" : "self-start rounded-bl-none"} max-w-5/12`}
     >
       {message.message}
+      {message.role === "loading" && <div className="scale-[25%]"><span className="loader"></span></div>}
     </motion.div>
   );
 };
 
 export default function ChatThread({
   messageHistory,
+  loading
 }: {
   messageHistory: ChatMessage[];
+  loading?: boolean
 }) {
   return (
     <div className="flex w-full flex-col gap-4">

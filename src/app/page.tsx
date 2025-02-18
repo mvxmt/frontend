@@ -1,19 +1,23 @@
 "use client";
 
 import { testAction } from "@/actions/chatboxSubmit";
+import { submitPrompt } from "@/actions/chatboxSubmit";
+
 import {ChatBox} from "@/components/Chatbox";
 import ChatThread from "@/components/ChatThread";
 import { ChatMessage, useChatHistory } from "@/utils/chat";
 import { AnimatePresence, motion } from "motion/react";
-import { useOptimistic, useRef } from "react";
+import { useOptimistic, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 export default function Home() {
+  const [loading, setLoading] = useState(false)
   const { history, addToHistory } = useChatHistory();
   const [oHistory, addHistoryOptimisitic] = useOptimistic(
     history,
-    (state, v: ChatMessage) => [...state, v],
+    (state, v: ChatMessage) => [...state, v, {id: "loading", role: "loading" as const, message: ""}],
   );
+
   const formRef = useRef<HTMLFormElement>(null)
 
   const handleSubmit = async (formData: FormData) => {
@@ -27,10 +31,12 @@ export default function Home() {
     formRef.current?.reset()
 
     addToHistory(userMessage)
-    await testAction(formData);
+    setLoading(true)
+    const response = await submitPrompt(formData);
+    setLoading(false)
     addToHistory({
       role: "assistant",
-      message: uuidv4(),
+      message: response!, //LLM response goes here
       id: uuidv4(),
     });
   };
@@ -53,7 +59,7 @@ export default function Home() {
 
         {oHistory.length > 0 && (
           <div className="w-1/2 p-6 lg:pt-24">
-            <ChatThread messageHistory={oHistory}></ChatThread>
+            <ChatThread loading={loading} messageHistory={oHistory}></ChatThread>
           </div>
         )}
 

@@ -3,7 +3,7 @@ import { useState } from "react";
 
 export type ChatMessage = {
     id: string
-    role: "assistant" | "user",
+    role: "assistant" | "user" | "loading",
     message: string
 }
 
