@@ -2,7 +2,9 @@
 
 import { FormHTMLAttributes, Ref } from "react";
 import { motion } from "motion/react";
-import Popup from "reactjs-popup";
+import dynamic from "next/dynamic";
+
+const Popup = dynamic(() => import('reactjs-popup'), { ssr: false })
 
 export const ChatBox: React.FC<{
   sendMessage?: FormHTMLAttributes<HTMLFormElement>["action"];
@@ -72,7 +74,7 @@ export const ChatBox: React.FC<{
           >
             <div className="flex h-[75px] w-[282px] flex-col content-stretch items-center justify-items-center rounded-3xl bg-background-text">
               <button
-                type="buton"
+                type="button"
                 className="flex h-full w-full content-stretch items-center justify-center bg-transparent px-5 font-sans text-secondary"
                 title="Sign In"
               >
