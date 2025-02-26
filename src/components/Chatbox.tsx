@@ -3,6 +3,7 @@
 import { FormHTMLAttributes, Ref } from "react";
 import { motion } from "motion/react";
 import Popup from "reactjs-popup";
+import Link from "next/link";
 
 export const ChatBox: React.FC<{
   sendMessage?: FormHTMLAttributes<HTMLFormElement>["action"];
@@ -43,6 +44,8 @@ export const ChatBox: React.FC<{
             disabled={isPending}
           ></input>
           <Popup
+            id="popup"
+            ref={ref}
             trigger={
               <button type="button">
                 <svg
@@ -76,7 +79,7 @@ export const ChatBox: React.FC<{
                 className="flex h-full w-full content-stretch items-center justify-center bg-transparent px-5 font-sans text-secondary"
                 title="Sign In"
               >
-                Sign In
+                <Link href={`/login/`}>Sign In</Link>
               </button>
             </div>
           </Popup>
@@ -86,5 +89,6 @@ export const ChatBox: React.FC<{
         Powered by Llama 3.2. Accuracy of responses cannot be guaranteed.
       </p>
     </motion.div>
+
   );
 };
