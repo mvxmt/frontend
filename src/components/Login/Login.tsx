@@ -14,7 +14,7 @@ export default function Login() {
     console.log(formJson);
   }
   return (
-    <form method="post" onSubmit={handleLogin}>
+    <form  onSubmit={handleLogin}>
       <Input inputName="email" placeholder="Email Address" type="text" />
       <Input inputName="password" placeholder="Password" type="password" />
       <Button text="Login" />
