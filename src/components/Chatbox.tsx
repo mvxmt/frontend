@@ -44,8 +44,6 @@ export const ChatBox: React.FC<{
             disabled={isPending}
           ></input>
           <Popup
-            id="popup"
-            ref={ref}
             trigger={
               <button type="button">
                 <svg
@@ -75,7 +73,7 @@ export const ChatBox: React.FC<{
           >
             <div className="flex h-[75px] w-[282px] flex-col content-stretch items-center justify-items-center rounded-3xl bg-background-text">
               <button
-                type="buton"
+                type="button"
                 className="flex h-full w-full content-stretch items-center justify-center bg-transparent px-5 font-sans text-secondary"
                 title="Sign In"
               >
@@ -89,6 +87,5 @@ export const ChatBox: React.FC<{
         Powered by Llama 3.2. Accuracy of responses cannot be guaranteed.
       </p>
     </motion.div>
-
   );
 };
