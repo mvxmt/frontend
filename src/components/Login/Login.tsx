@@ -1,8 +1,7 @@
 "use client";
 
-import Input from "@/components/Input";
-import Button from "@/components/Button";
-import { FormHTMLAttributes } from "react";
+import Input from "@/components/Login/Input";
+import Button from "@/components/Login/Button";
 
 export default function Login() {
   function handleLogin(e) {
@@ -22,5 +21,3 @@ export default function Login() {
     </form>
   );
 }
-//Wrap input and button in form and make button of type submit
-//Hydration Issue - Fix on tylers branch, overrides to run on client instead of server
