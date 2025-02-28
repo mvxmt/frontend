@@ -16,7 +16,7 @@ const Message: React.FC<{ message: ChatMessage }> = ({ message }) => {
 
 export default function ChatThread({
   messageHistory,
-  loading
+  //loading
 }: {
   messageHistory: ChatMessage[];
   loading?: boolean

@@ -1,14 +1,9 @@
 "use server";
 
-import { cookies } from "next/headers";
+//import { cookies } from "next/headers";
 
 const waitFor = (ms: number) => new Promise(res => setTimeout(res, ms))
 
-export const testAction = async (data: FormData) => {
-  const query = data.get("query");
-  await waitFor(1000)
-  console.log(`server action test: ${query}`);
-};
 
 export const submitPrompt = async (data: FormData) => {  
   const query = data.get("query");

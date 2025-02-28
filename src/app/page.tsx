@@ -1,6 +1,5 @@
 "use client";
 
-import { testAction } from "@/actions/chatboxSubmit";
 import { submitPrompt } from "@/actions/chatboxSubmit";
 
 import {ChatBox} from "@/components/Chatbox";
