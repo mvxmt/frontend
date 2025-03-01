@@ -1,4 +1,4 @@
-export default function Button({ text }) {
+export default function Button({ text }: any) {
   return (
     <div className="align-center flex">
       <button
