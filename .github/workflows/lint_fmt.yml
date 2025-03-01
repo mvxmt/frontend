@@ -25,5 +25,6 @@ jobs:
 
       - run: pnpm i
       - run: pnpm lint
+      - run: pnpm tsc
       # - run: pnpm eslint .
       # - run: pnpm prettier -c **/*.ts
