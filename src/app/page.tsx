@@ -1,52 +1,90 @@
 "use client";
 
-import { submitPrompt } from "@/actions/chatboxSubmit";
-
-import {ChatBox} from "@/components/Chatbox";
+import { ChatBox } from "@/components/Chatbox";
 import ChatThread from "@/components/ChatThread";
-import { ChatMessage, useChatHistory } from "@/utils/chat";
+import { ChatMessage, useChatHistory, useTextStream } from "@/utils/chat";
 import { AnimatePresence, motion } from "motion/react";
-import { useOptimistic, useRef, useState } from "react";
+import { useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 
+type Response = {
+  model: string;
+  created_at: string;
+  response: string;
+  done: boolean;
+};
+
 export default function Home() {
-  const [loading, setLoading] = useState(false)
   const { history, addToHistory } = useChatHistory();
-  const [oHistory, addHistoryOptimisitic] = useOptimistic(
-    history,
-    (state, v: ChatMessage) => [...state, v, {id: "loading", role: "loading" as const, message: ""}],
-  );
+  const [sendToken, startStreaming, endStreaming, streamingMessage] = useTextStream({
+    addToHistory,
+  });
 
-  const formRef = useRef<HTMLFormElement>(null)
+  const formRef = useRef<HTMLFormElement>(null);
 
-  const handleSubmit = async (formData: FormData) => {
+  const handleSubmit = (formData: FormData) => {
     const userMessage = {
       role: "user",
       message: formData.get("query") as string,
       id: uuidv4(),
-    } as ChatMessage
-    
-    addHistoryOptimisitic(userMessage)
-    formRef.current?.reset()
+    } as ChatMessage;
 
-    addToHistory(userMessage)
-    setLoading(true)
-    const response = await submitPrompt(formData);
-    setLoading(false)
-    addToHistory({
-      role: "assistant",
-      message: response!, //LLM response goes here
-      id: uuidv4(),
+    addToHistory(userMessage);
+    formRef.current?.reset();
+
+    fetch("http://mvxmt.tail8d155b.ts.net:11434/api/generate", {
+      method: "POST",
+      body: JSON.stringify({
+        model: "llama3.2",
+        prompt: formData.get("query")!,
+        stream: true,
+      }),
+    }).then((response) => {
+      if (response.body) {
+        response.body
+          .pipeThrough(new TextDecoderStream())
+          .pipeThrough(
+            new TransformStream<string, Response>({
+              async transform(chunk, controller) {
+                try {
+                  controller.enqueue(JSON.parse(chunk) as Response);
+                } catch {
+                  chunk
+                    .split("\n")
+                    .filter((v) => v.length > 0)
+                    .map((v) => {
+                      console.log(v);
+                      return JSON.parse(v) as Response;
+                    })
+                    .forEach((v) => controller.enqueue(v));
+                }
+              },
+            }),
+          )
+          .pipeTo(
+            new WritableStream({
+              start() {
+                startStreaming()
+              },
+              write(val) {
+                sendToken(val.response);
+              },
+              close() {
+                endStreaming();
+              },
+            }),
+          );
+      }
     });
   };
 
   return (
     <div className="flex min-h-screen flex-col items-center bg-background">
       <div
-        className={`flex w-full flex-1 flex-col content-stretch items-center ${oHistory.length > 0 ? "justify-between" : "justify-center"} gap-[20px] font-sans text-secondary`}
+        className={`flex w-full flex-1 flex-col content-stretch items-center ${history.length > 0 ? "justify-between" : "justify-center"} gap-[20px] font-sans text-secondary`}
       >
         <AnimatePresence mode="popLayout">
-          {oHistory.length < 1 && (
+          {history.length < 1 && (
             <motion.h1
               exit={{ opacity: 0, position: "absolute" }}
               className={`self-center text-7xl`}
@@ -56,9 +94,12 @@ export default function Home() {
           )}
         </AnimatePresence>
 
-        {oHistory.length > 0 && (
+        {history.length > 0 && (
           <div className="w-1/2 p-6 lg:pt-24">
-            <ChatThread loading={loading} messageHistory={oHistory}></ChatThread>
+            <ChatThread
+              pendingMessage={streamingMessage}
+              messageHistory={history}
+            ></ChatThread>
           </div>
         )}
 
