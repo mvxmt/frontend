@@ -2,14 +2,30 @@
 
 import { FormHTMLAttributes, Ref } from "react";
 import { motion } from "motion/react";
-import Popup from "reactjs-popup";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+import { useQueryClient } from "@tanstack/react-query";
+import { useUserInfo } from "@/utils/auth/hooks";
+import { useSetAtom } from "jotai";
+import { tokenAtom } from "@/utils/auth/store";
+
+const Popup = dynamic(() => import("reactjs-popup"), { ssr: false });
 
 export const ChatBox: React.FC<{
   sendMessage?: FormHTMLAttributes<HTMLFormElement>["action"];
   isPending?: boolean;
   ref?: Ref<HTMLFormElement>;
 }> = ({ sendMessage, isPending, ref }) => {
+  const queryClient = useQueryClient()
+
+  const setToken = useSetAtom(tokenAtom)
+  const userInfo = useUserInfo()
+
+  const logout = async () => {
+    setToken(undefined);
+    queryClient.invalidateQueries({queryKey: ["userInfo"]})
+  };
+
   return (
     <motion.div layout className="mb-4">
       <form action={sendMessage} ref={ref}>
@@ -72,13 +88,24 @@ export const ChatBox: React.FC<{
             position="top center"
           >
             <div className="flex h-[75px] w-[282px] flex-col content-stretch items-center justify-items-center rounded-3xl bg-background-text">
-              <button
-                type="button"
-                className="flex h-full w-full content-stretch items-center justify-center bg-transparent px-5 font-sans text-secondary"
-                title="Sign In"
-              >
-                <Link href={`/login/`}>Sign In</Link>
-              </button>
+              {!userInfo.isSuccess ? (
+                <button
+                  type="button"
+                  className="flex h-full w-full content-stretch items-center justify-center bg-transparent px-5 font-sans text-secondary"
+                  title="Sign In"
+                >
+                  <Link href={`/login/`}>Sign In</Link>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="flex h-full w-full content-stretch items-center justify-center bg-transparent px-5 font-sans text-secondary"
+                  title="Sign In"
+                  onClick={logout}
+                >
+                  Log Out
+                </button>
+              )}
             </div>
           </Popup>
         </div>
