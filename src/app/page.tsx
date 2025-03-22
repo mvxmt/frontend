@@ -2,10 +2,12 @@
 
 import { ChatBox } from "@/components/Chatbox";
 import ChatThread from "@/components/ChatThread";
+import Panel from "@/components/Sidepanel/Panel";
 import { ChatMessage, useChatHistory, useTextStream } from "@/utils/chat";
 import { AnimatePresence, motion } from "motion/react";
 import { useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
+
 
 type Response = {
   model: string;
@@ -19,7 +21,7 @@ export default function Home() {
   const [sendToken, startStreaming, endStreaming, streamingMessage] = useTextStream({
     addToHistory,
   });
-
+  const [openPanel, setOpenPanel] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
   const handleSubmit = (formData: FormData) => {
@@ -104,6 +106,7 @@ export default function Home() {
         )}
 
         <ChatBox ref={formRef} sendMessage={handleSubmit}></ChatBox>
+        <Panel type={'left'} panelStatus={setOpenPanel} />
       </div>
     </div>
   );
