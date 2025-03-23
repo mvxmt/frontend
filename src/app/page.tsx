@@ -2,6 +2,7 @@
 
 import { ChatBox } from "@/components/Chatbox";
 import ChatThread from "@/components/ChatThread";
+import { useUserInfo } from "@/utils/auth/hooks";
 import { ChatMessage, useChatHistory, useTextStream } from "@/utils/chat";
 import { AnimatePresence, motion } from "motion/react";
 import { useRef } from "react";
@@ -16,11 +17,14 @@ type Response = {
 
 export default function Home() {
   const { history, addToHistory } = useChatHistory();
-  const [sendToken, startStreaming, endStreaming, streamingMessage] = useTextStream({
-    addToHistory,
-  });
+  const [sendToken, startStreaming, endStreaming, streamingMessage] =
+    useTextStream({
+      addToHistory,
+    });
 
   const formRef = useRef<HTMLFormElement>(null);
+
+  const userInfo = useUserInfo()
 
   const handleSubmit = (formData: FormData) => {
     const userMessage = {
@@ -64,7 +68,7 @@ export default function Home() {
           .pipeTo(
             new WritableStream({
               start() {
-                startStreaming()
+                startStreaming();
               },
               write(val) {
                 sendToken(val.response);
@@ -89,7 +93,7 @@ export default function Home() {
               exit={{ opacity: 0, position: "absolute" }}
               className={`self-center text-7xl`}
             >
-              Welcome,
+              Welcome{userInfo.isSuccess ? " " + userInfo.data.name : ""},
             </motion.h1>
           )}
         </AnimatePresence>
