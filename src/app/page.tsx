@@ -2,10 +2,9 @@
 
 import { ChatBox } from "@/components/Chatbox";
 import ChatThread from "@/components/ChatThread";
-import Panel from "@/components/Sidepanel/Panel";
 import { ChatMessage, useChatHistory, useTextStream } from "@/utils/chat";
 import { AnimatePresence, motion } from "motion/react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 
@@ -18,10 +17,11 @@ type Response = {
 
 export default function Home() {
   const { history, addToHistory } = useChatHistory();
-  const [sendToken, startStreaming, endStreaming, streamingMessage] = useTextStream({
-    addToHistory,
-  });
-  const [openPanel, setOpenPanel] = useState(false);
+  const [sendToken, startStreaming, endStreaming, streamingMessage] =
+    useTextStream({
+      addToHistory,
+    });
+  const [panelStatus, setOpenPanel] = useState<boolean>(false);
   const formRef = useRef<HTMLFormElement>(null);
 
   const handleSubmit = (formData: FormData) => {
@@ -66,7 +66,7 @@ export default function Home() {
           .pipeTo(
             new WritableStream({
               start() {
-                startStreaming()
+                startStreaming();
               },
               write(val) {
                 sendToken(val.response);
@@ -104,9 +104,7 @@ export default function Home() {
             ></ChatThread>
           </div>
         )}
-
         <ChatBox ref={formRef} sendMessage={handleSubmit}></ChatBox>
-        <Panel type={'left'} panelStatus={setOpenPanel} />
       </div>
     </div>
   );
