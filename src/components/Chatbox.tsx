@@ -4,7 +4,8 @@ import { FormHTMLAttributes, Ref } from "react";
 import { motion } from "motion/react";
 import Popup from "reactjs-popup";
 import Link from "next/link";
-import PanelDrawer from "@/components/Sidepanel/Panel-Material";
+/*import PanelDrawer from "@/components/Sidepanel/Panel-Material";*/
+import PanelDrawer from "@/components/Sidepanel/Panel";
 
 export const ChatBox: React.FC<{
   sendMessage?: FormHTMLAttributes<HTMLFormElement>["action"];
@@ -15,7 +16,7 @@ export const ChatBox: React.FC<{
     <motion.div layout className="mb-4">
       <form action={sendMessage} ref={ref}>
         <div className="grid h-[75px] w-[960px] flex-shrink-0 grid-cols-6 content-stretch items-center justify-stretch justify-items-center self-center rounded-3xl bg-background-text">
-        <PanelDrawer />
+        <PanelDrawer / >
           <input
             name="query"
             placeholder="What would you like to know..."
