@@ -53,30 +53,38 @@ export const refreshToken = async () => {
   return token;
 };
 
-export const getAuthenticatedRoute =
-  <T>(f: (token: string | undefined) => Promise<T>): (() => Promise<T>) =>
-  async () => {
+export function getAuthenticatedRoute<T>(
+  f: (token: string | undefined) => Promise<T>,
+): () => Promise<T>;
+export function getAuthenticatedRoute<T, U>(
+  f: (token: string | undefined, args: U) => Promise<T>,
+): (extra: U) => Promise<T>;
+export function getAuthenticatedRoute<T, U>(
+  f: (token: string | undefined, args?: U) => Promise<T>,
+): (extra?: U) => Promise<T> {
+  return async (extra?: U) => {
     const store = getDefaultStore();
     const accessToken = store.get(tokenAtom);
 
-    if(!accessToken) {
-      throw new UnauthenticatedError()
+    if (!accessToken) {
+      throw new UnauthenticatedError();
     }
-    
+
     try {
-      return await f(accessToken);
-    } catch(e) {
-      if(e instanceof UnauthenticatedError) {
+      return await f(accessToken, extra);
+    } catch (e) {
+      if (e instanceof UnauthenticatedError) {
         const newToken = await refreshToken();
         if (!newToken) {
           throw e;
         }
-        return await f(newToken.access_token);
+        return await f(accessToken, extra);
       } else {
-        throw e
+        throw e;
       }
     }
   };
+}
 
 export const getAccessToken = async (): Promise<string> => {
   const store = getDefaultStore();
@@ -105,15 +113,15 @@ export const logout = async () => {
   resetAuthState();
 };
 
-export const getUserInfo = getAuthenticatedRoute(async (t) => {
+export const getUserInfo = getAuthenticatedRoute(async (token) => {
   const res = await fetch("/api/auth/users/me", {
     headers: {
-      Authorization: `Bearer ${t}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
-  if(res.status === 401) {
-    throw new UnauthenticatedError()
+  if (res.status === 401) {
+    throw new UnauthenticatedError();
   }
 
   if (!res.ok) {
