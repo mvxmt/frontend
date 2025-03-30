@@ -1,6 +1,8 @@
 import { getDefaultStore } from "jotai";
 import { resetAuthState, tokenAtom } from "./store";
 
+export class UnauthenticatedError extends Error {}
+
 export const getToken = async ({
   username,
   password,
@@ -57,14 +59,22 @@ export const getAuthenticatedRoute =
     const store = getDefaultStore();
     const accessToken = store.get(tokenAtom);
 
+    if(!accessToken) {
+      throw new UnauthenticatedError()
+    }
+    
     try {
-      return f(accessToken);
-    } catch {
-      const newToken = await refreshToken();
-      if (!newToken) {
-        throw new Error("Unauthenticated");
+      return await f(accessToken);
+    } catch(e) {
+      if(e instanceof UnauthenticatedError) {
+        const newToken = await refreshToken();
+        if (!newToken) {
+          throw e;
+        }
+        return await f(newToken.access_token);
+      } else {
+        throw e
       }
-      return f(newToken.access_token);
     }
   };
 
@@ -102,8 +112,12 @@ export const getUserInfo = getAuthenticatedRoute(async (t) => {
     },
   });
 
+  if(res.status === 401) {
+    throw new UnauthenticatedError()
+  }
+
   if (!res.ok) {
-    throw Error("failed to load user profile");
+    throw new Error("failed to load user profile");
   }
 
   return (await res.json()) as {

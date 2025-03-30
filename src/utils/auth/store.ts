@@ -7,3 +7,16 @@ export const resetAuthState = () => {
     const store = getDefaultStore();
     store.set(tokenAtom, undefined);
 }
+
+declare global {
+    interface Window {
+        invalidateToken: () => void
+    }
+}
+
+if(typeof window != "undefined" && process.env.NODE_ENV === "development") {
+    window.invalidateToken = () => {
+        const store = getDefaultStore()
+        store.set(tokenAtom, "ijdiwejdeowidjwoidjwioeodjiweoj")
+    }
+}
