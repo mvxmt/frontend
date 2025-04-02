@@ -1,11 +1,28 @@
 "use client";
 
 import { Drawer } from "vaul";
+import React from "react";
 import PanelEntry from "@/components/Sidepanel/PanelEntry";
+import { useUserInfo } from "@/utils/auth/hooks";
 
 export default function PanelDrawer() {
+  const [isOpen, setOpen] = React.useState(false);
+  const userInfo = useUserInfo();
+  const onDrawerOpen = (open) => {
+    if (open) {
+      console.log("Drawer Opened!");
+    }
+  };
+
   return (
-    <Drawer.Root direction="left">
+    <Drawer.Root
+      direction="left"
+      open={isOpen}
+      onOpenChange={(open) => {
+        setOpen(open);
+        onDrawerOpen(open);
+      }}
+    >
       <Drawer.Trigger>
         <svg
           className="text-icon"
