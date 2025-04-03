@@ -1,6 +1,6 @@
 import { atom, getDefaultStore, useAtomValue, useSetAtom } from "jotai";
 import { useMemo, useState } from "react";
-import { v4 } from "uuid";
+import {ulid} from "ulid";
 
 export type ChatMessage = {
   id: string;
@@ -13,21 +13,21 @@ export function useTextStream({
 }: {
   addToHistory: (cm: ChatMessage) => void;
 }) {
-  const uuidAtom = useMemo(() => atom(v4()), [])
+  const ulidAtom = useMemo(() => atom(ulid()), [])
   const streamingStringAtom = useMemo(() => atom([] as string[]), [])
   const streamingMessageAtom = useMemo(() => atom(get => ({
     message: get(streamingStringAtom).join(""),
     role: "assistant",
-    id: get(uuidAtom)
-  } as ChatMessage)), [streamingStringAtom, uuidAtom])
+    id: get(ulidAtom)
+  } as ChatMessage)), [streamingStringAtom, ulidAtom])
   const [isStreaming, setIsStreaming] = useState(false)
 
-  const setUUID = useSetAtom(uuidAtom)
+  const setUUID = useSetAtom(ulidAtom)
   const setStreamingString = useSetAtom(streamingStringAtom)
   const streamingMessage = useAtomValue(streamingMessageAtom)
 
   const start = () => {
-    setUUID(() => v4())
+    setUUID(() => ulid())
     setIsStreaming(true)
   }
 
