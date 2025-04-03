@@ -2,7 +2,7 @@
 
 import Button from "@/components/Login/Button";
 import Input from "@/components/Login/Input";
-import { getToken } from "@/utils/auth";
+import { getToken, getUserInfo } from "@/utils/auth";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { SyntheticEvent, useState } from "react";
@@ -22,10 +22,14 @@ export default function Login() {
 
   const loginMutation = useMutation({
     mutationFn: async (data: LoginFormT) => {
-      getToken(data);
+      await getToken(data);
     },
-    onSuccess() {
-      queryClient.resetQueries()
+    async onSuccess() {
+      await queryClient.resetQueries()
+
+      const userData = await getUserInfo()
+      queryClient.setQueryData(["userInfo"], userData)
+
       router.replace("/")
     }
   });
@@ -55,11 +59,11 @@ export default function Login() {
   return (
     <form onSubmit={handleLogin}>
       <Input inputName="email" placeholder="Email Address" type="text" />
-      <span className="font-bold font-sans text-red-500">{formError?.format().username?._errors.join("")}</span>
+      <span className="font-bold font-sans text-red-500">{formError?.format().username?._errors.join(" ")}</span>
       <Input inputName="password" placeholder="Password" type="password" />
-      <span className="font-bold font-sans text-red-500">{formError?.format().password?._errors.join("")}</span>
+      <span className="font-bold font-sans text-red-500">{formError?.format().password?._errors.join(" ")}</span>
       <span className="mt-2 font-bold font-sans text-red-500 text-center">{loginMutation.error?.message}</span>
-      <Button text="Login" />
+      <Button disabled={loginMutation.isPending} text="Login" />
     </form>
   );
 }
