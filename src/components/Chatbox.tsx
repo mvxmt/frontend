@@ -33,7 +33,7 @@ export const ChatBox: React.FC<{
         <div className="grid h-[75px] w-[960px] flex-shrink-0 grid-cols-6 content-stretch items-center justify-stretch justify-items-center self-center rounded-3xl bg-background-text">
         {isAuthenticated?<PanelDrawer /> :null}
           <input
-            name="query"
+            name="user_prompt"
             placeholder="What would you like to know..."
             className="col-span-4 col-start-2 w-full bg-background-text text-2xl text-secondary placeholder:bg-background-text focus:outline-none"
             autoComplete="off"
