@@ -11,7 +11,7 @@ export const useFileInfoForUser = () => {
   return query;
 };
 
-export const deleteFileMutation = () =>{
+export const useDeleteFileMutation = () =>{
   return useMutation({
     mutationFn: ({ id }: { id: string }) => deleteUserFile({ id }),
   });

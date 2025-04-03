@@ -7,8 +7,8 @@ import dynamic from "next/dynamic";
 import { useQueryClient } from "@tanstack/react-query";
 import { useUserInfo } from "@/utils/auth/hooks";
 import { logout } from "@/utils/auth";
-import { useAtomValue, useSetAtom } from "jotai";
-import { tokenAtom, isAuthenticatedAtom } from "@/utils/auth/store";
+import { useAtomValue } from "jotai";
+import { isAuthenticatedAtom } from "@/utils/auth/store";
 import PanelDrawer from "./Sidepanel/Panel";
 
 const Popup = dynamic(() => import("reactjs-popup"), { ssr: false });

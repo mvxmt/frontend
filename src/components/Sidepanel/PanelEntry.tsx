@@ -1,10 +1,10 @@
 "use client";
 
-import { deleteFileMutation} from "@/utils/fileRetrieval/hooks";
+import { useDeleteFileMutation} from "@/utils/fileRetrieval/hooks";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function PanelDrawer({ doc_id,filename }) {
-  const deleteFile = deleteFileMutation();
+  const deleteFile = useDeleteFileMutation();
   const queryClient = useQueryClient();
 
   const handleFileDelete=(doc_id:string)=>{
