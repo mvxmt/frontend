@@ -1,12 +1,21 @@
 import { atom, getDefaultStore, useAtomValue, useSetAtom } from "jotai";
 import { useMemo, useState } from "react";
 import {ulid} from "ulid";
+import { z } from "zod";
 
 export type ChatMessage = {
   id: string;
   role: "assistant" | "user" | "loading";
   message: string;
-};
+}
+
+export const zStableChatMessage = z.object({
+  id: z.string().ulid(),
+  role: z.enum(["assistant", "user"]),
+  message: z.string()
+})
+
+export type StableChatMessage = z.infer<typeof zStableChatMessage>
 
 export function useTextStream({
   addToHistory,
