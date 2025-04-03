@@ -86,28 +86,6 @@ export function getAuthenticatedRoute<T, U>(
   };
 }
 
-export const getAccessToken = async (): Promise<string> => {
-  const store = getDefaultStore();
-  const accessToken = store.get(tokenAtom);
-
-  // Try to use the token, if invalid throw
-  const res = await fetch("/api/auth/users/me", {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-
-  if (res.status == 401) {
-    const newToken = await refreshToken();
-    if (!newToken) {
-      throw new Error("Unauthenticated");
-    }
-    return getAccessToken();
-  }
-
-  return accessToken!;
-};
-
 export const logout = async () => {
   await fetch("/api/auth/logout", { method: "POST" });
   resetAuthState();
