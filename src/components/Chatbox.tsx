@@ -7,8 +7,8 @@ import dynamic from "next/dynamic";
 import { useQueryClient } from "@tanstack/react-query";
 import { useUserInfo } from "@/utils/auth/hooks";
 import { logout } from "@/utils/auth";
-import { useSetAtom } from "jotai";
-import { tokenAtom } from "@/utils/auth/store";
+import { useAtomValue, useSetAtom } from "jotai";
+import { tokenAtom, isAuthenticatedAtom } from "@/utils/auth/store";
 import PanelDrawer from "./Sidepanel/Panel";
 
 const Popup = dynamic(() => import("reactjs-popup"), { ssr: false });
@@ -20,6 +20,7 @@ export const ChatBox: React.FC<{
 }> = ({ sendMessage, isPending, ref }) => {
   const queryClient = useQueryClient()
   const userInfo = useUserInfo()
+  const isAuthenticated = useAtomValue(isAuthenticatedAtom)
 
   const handleLogout = async () => {
     await logout()
@@ -30,8 +31,7 @@ export const ChatBox: React.FC<{
     <motion.div layout className="mb-4">
       <form action={sendMessage} ref={ref}>
         <div className="grid h-[75px] w-[960px] flex-shrink-0 grid-cols-6 content-stretch items-center justify-stretch justify-items-center self-center rounded-3xl bg-background-text">
-        <PanelDrawer />
-
+        {isAuthenticated?<PanelDrawer /> :null}
           <input
             name="query"
             placeholder="What would you like to know..."
