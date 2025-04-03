@@ -50,7 +50,7 @@ export const ChatBox: React.FC<{
           </svg>
 
           <input
-            name="query"
+            name="user_prompt"
             placeholder="What would you like to know..."
             className="col-span-4 col-start-2 w-full bg-background-text text-2xl text-secondary placeholder:bg-background-text focus:outline-none"
             autoComplete="off"
