@@ -3,9 +3,7 @@
 import Button from "@/components/Login/Button";
 import Input from "@/components/Login/Input";
 import { getToken } from "@/utils/auth";
-import { tokenAtom } from "@/utils/auth/store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useSetAtom } from "jotai";
 import { useRouter } from "next/navigation";
 import { SyntheticEvent, useState } from "react";
 import { z } from "zod";
@@ -20,16 +18,14 @@ type LoginFormT = z.infer<typeof loginFormModel>
 export default function Login() {
   const router = useRouter()
   const queryClient = useQueryClient()
-  const setTokenValue = useSetAtom(tokenAtom);
   const [formError, setFormError] = useState<z.ZodError<LoginFormT> | undefined>()
 
   const loginMutation = useMutation({
     mutationFn: async (data: LoginFormT) => {
-      return getToken(data);
+      getToken(data);
     },
-    onSuccess(v) {
-      setTokenValue(v.access_token)
-      queryClient.invalidateQueries({queryKey: ["userInfo"]})
+    onSuccess() {
+      queryClient.resetQueries()
       router.replace("/")
     }
   });

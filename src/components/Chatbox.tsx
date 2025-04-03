@@ -6,8 +6,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useQueryClient } from "@tanstack/react-query";
 import { useUserInfo } from "@/utils/auth/hooks";
-import { useSetAtom } from "jotai";
-import { tokenAtom } from "@/utils/auth/store";
+import { logout } from "@/utils/auth";
 
 const Popup = dynamic(() => import("reactjs-popup"), { ssr: false });
 
@@ -17,13 +16,11 @@ export const ChatBox: React.FC<{
   ref?: Ref<HTMLFormElement>;
 }> = ({ sendMessage, isPending, ref }) => {
   const queryClient = useQueryClient()
-
-  const setToken = useSetAtom(tokenAtom)
   const userInfo = useUserInfo()
 
-  const logout = async () => {
-    setToken(undefined);
-    queryClient.invalidateQueries({queryKey: ["userInfo"]})
+  const handleLogout = async () => {
+    await logout()
+    await queryClient.resetQueries()
   };
 
   return (
@@ -88,7 +85,7 @@ export const ChatBox: React.FC<{
             position="top center"
           >
             <div className="flex h-[75px] w-[282px] flex-col content-stretch items-center justify-items-center rounded-3xl bg-background-text">
-              {!userInfo.isSuccess ? (
+              {!userInfo.data ? (
                 <button
                   type="button"
                   className="flex h-full w-full content-stretch items-center justify-center bg-transparent px-5 font-sans text-secondary"
@@ -101,7 +98,7 @@ export const ChatBox: React.FC<{
                   type="button"
                   className="flex h-full w-full content-stretch items-center justify-center bg-transparent px-5 font-sans text-secondary"
                   title="Sign In"
-                  onClick={logout}
+                  onClick={handleLogout}
                 >
                   Log Out
                 </button>

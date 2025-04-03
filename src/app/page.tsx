@@ -23,8 +23,7 @@ export default function Home() {
     });
 
   const formRef = useRef<HTMLFormElement>(null);
-
-  const userInfo = useUserInfo()
+  const userInfo = useUserInfo();
 
   const handleSubmit = (formData: FormData) => {
     const userMessage = {
@@ -93,7 +92,7 @@ export default function Home() {
               exit={{ opacity: 0, position: "absolute" }}
               className={`self-center text-7xl`}
             >
-              Welcome{userInfo.isSuccess ? " " + userInfo.data.name : ""},
+              Welcome{userInfo.data ? " " + userInfo.data.name : ""},
             </motion.h1>
           )}
         </AnimatePresence>

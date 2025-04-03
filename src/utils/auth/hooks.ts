@@ -1,20 +1,16 @@
-import { getDefaultStore } from "jotai";
-import { tokenAtom } from "./store";
-import { getUserInfo } from ".";
 import { useQuery } from "@tanstack/react-query";
+import { getUserInfo } from ".";
+import { useAtomValue } from "jotai";
+import { isAuthenticatedAtom } from "./store";
 
 export const useUserInfo = () => {
+  const isAuthenticated = useAtomValue(isAuthenticatedAtom)
   const query = useQuery({
     queryKey: ["userInfo"],
     queryFn: async () => {
-      const store = getDefaultStore()
-      const token = store.get(tokenAtom);
-      if (!token) {
-        throw new Error("Unauthenticated")
-      }
-      return getUserInfo(token);
+      return getUserInfo();
     },
-    retry: false
+    enabled: isAuthenticated
   });
 
   return query;
