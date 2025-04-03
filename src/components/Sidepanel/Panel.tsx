@@ -6,11 +6,16 @@ import PanelEntry from "@/components/Sidepanel/PanelEntry";
 import { useUserInfo } from "@/utils/auth/hooks";
 
 export default function PanelDrawer() {
+
   const [isOpen, setOpen] = React.useState(false);
   const userInfo = useUserInfo();
+
   const onDrawerOpen = (open) => {
     if (open) {
       console.log("Drawer Opened!");
+      if (userInfo.isSuccess){
+        console.log("Valid Retreival")
+      }
     }
   };
 
