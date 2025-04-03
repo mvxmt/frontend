@@ -1,6 +1,17 @@
 "use client";
 
-export default function PanelDrawer({ filename }) {
+import { deleteFileMutation} from "@/utils/fileRetrieval/hooks";
+import { useQueryClient } from "@tanstack/react-query";
+
+export default function PanelDrawer({ doc_id,filename }) {
+  const deleteFile = deleteFileMutation();
+  const queryClient = useQueryClient();
+
+  const handleFileDelete=(doc_id:string)=>{
+    deleteFile.mutate({id:doc_id});
+    //Force Refetch
+    queryClient.invalidateQueries({ queryKey: ["userFiles"] });;
+  }
   return (
     <div className="grid grid-cols-5 grid-rows-1 gap-5 pb-5 pt-5">
       <div className="justify-items-start px-2">
@@ -22,7 +33,9 @@ export default function PanelDrawer({ filename }) {
       <div className="col-span-3 justify-center px-2 text-center align-middle font-sans text-2xl text-secondary">
         {filename}
       </div>
-      <button>
+      <button onClick={() => {
+          handleFileDelete(doc_id)
+        }}>
         <div className="justify-end px-2">
           <svg
             width="24"

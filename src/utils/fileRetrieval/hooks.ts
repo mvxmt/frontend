@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query"
-import { getAllUserFiles } from ".";
+import { useMutation, useQuery } from "@tanstack/react-query"
+import { deleteUserFile, getAllUserFiles } from ".";
 
 export const useFileInfoForUser = () => {
   const query = useQuery({
@@ -9,4 +9,10 @@ export const useFileInfoForUser = () => {
     },
   });
   return query;
+};
+
+export const deleteFileMutation = () =>{
+  return useMutation({
+    mutationFn: ({ id }: { id: string }) => deleteUserFile({ id }),
+  });
 };

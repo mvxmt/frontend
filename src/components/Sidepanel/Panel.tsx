@@ -68,7 +68,7 @@ function DrawerContent() {
       </Drawer.Title>
       <div className="grid grid-cols-1 gap-4">
         <div className="mb-2 mt-2 text-secondary">
-          {userFile.isSuccess ? userFile.data.map(v => <PanelEntry key={v.id} filename={v.filename} />) : null}
+          {userFile.isSuccess ? userFile.data.map(v => <PanelEntry key={v.id} doc_id={v.id} filename={v.filename} />) : null}
         </div>
       </div>
     </div>
