@@ -1,21 +1,24 @@
 import { atom, getDefaultStore, useAtomValue, useSetAtom } from "jotai";
 import { useMemo, useState } from "react";
-import {ulid} from "ulid";
+import { ulid } from "ulid";
 import { z } from "zod";
 
-export type ChatMessage = {
-  id: string;
-  role: "assistant" | "user" | "loading";
-  message: string;
-}
-
-export const zStableChatMessage = z.object({
+export const zChatMessage = z.object({
   id: z.string().ulid(),
-  role: z.enum(["assistant", "user"]),
-  message: z.string()
-})
+  role: z.enum(["assistant", "user", "loading"]),
+  message: z.string(),
+});
 
-export type StableChatMessage = z.infer<typeof zStableChatMessage>
+export type ChatMessage = z.infer<typeof zChatMessage>;
+
+export const zStableChatMessage = z.intersection(
+  zChatMessage,
+  z.object({
+    role: z.enum(["assistant", "user"]),
+  }),
+);
+
+export type StableChatMessage = z.infer<typeof zStableChatMessage>;
 
 export function useTextStream({
   addToHistory,
@@ -31,9 +34,9 @@ export function useTextStream({
   } as ChatMessage)), [streamingStringAtom, ulidAtom])
   const [isStreaming, setIsStreaming] = useState(false)
 
-  const setUUID = useSetAtom(ulidAtom)
-  const setStreamingString = useSetAtom(streamingStringAtom)
-  const streamingMessage = useAtomValue(streamingMessageAtom)
+  const setUUID = useSetAtom(ulidAtom);
+  const setStreamingString = useSetAtom(streamingStringAtom);
+  const streamingMessage = useAtomValue(streamingMessageAtom);
 
   const start = () => {
     setUUID(() => ulid())
@@ -46,10 +49,10 @@ export function useTextStream({
 
   const end = () => {
     // We must do this since this function is called outside of React in a promise callback
-    const defaultStore = getDefaultStore()
+    const defaultStore = getDefaultStore();
 
-    const chatMessage = defaultStore.get(streamingMessageAtom)
-    console.log(`end: ${JSON.stringify(chatMessage)}`)
+    const chatMessage = defaultStore.get(streamingMessageAtom);
+    console.log(`end: ${JSON.stringify(chatMessage)}`);
     addToHistory(chatMessage);
     setStreamingString([]);
     setIsStreaming(false)
