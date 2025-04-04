@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { useUploadFileMutation } from "@/utils/fileUpload/hooks"
 
 export default function FileUpload() {
   const [file, setFile] = useState<File | null>(null)
@@ -13,17 +14,7 @@ export default function FileUpload() {
     formData.append('src_file', file)
     formData.append('user_id', userId.toString())
 
-    const res = await fetch('http://localhost:8000/file/upload', {
-      method: 'POST',
-      body: formData,
-    })
-
-    if (res.ok) {
-      alert('File uploaded successfully!')
-    } else {
-      const err = await res.json()
-      alert(`Upload failed: ${err.detail || 'Unknown error'}`)
-    }
+    const uploadFile = useUploadFileMutation();
   }
 
   return (
