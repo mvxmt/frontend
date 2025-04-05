@@ -6,15 +6,15 @@ export default function FileUpload() {
   const [file, setFile] = useState<File | null>(null)
   const [userId, setUserId] = useState<number>(1)
 
+  const uploadFile = useUploadFileMutation();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!file) return
 
     const formData = new FormData()
     formData.append('src_file', file)
-    formData.append('user_id', userId.toString())
-
-    const uploadFile = useUploadFileMutation();
+    formData.append('user_id', userId.toString())    
   }
 
   return (
