@@ -8,6 +8,8 @@ import { AnimatePresence, motion } from "motion/react";
 import { useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 
+import FileUpload from "@/components/FileUpload"
+
 type Response = {
   model: string;
   created_at: string;
@@ -105,7 +107,7 @@ export default function Home() {
             ></ChatThread>
           </div>
         )}
-
+          <FileUpload />
         <ChatBox ref={formRef} sendMessage={handleSubmit}></ChatBox>
       </div>
     </div>

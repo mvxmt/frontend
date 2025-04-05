@@ -1,10 +1,12 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useUploadFileMutation } from "@/utils/fileUpload/hooks"
 
 export default function FileUpload() {
   const [file, setFile] = useState<File | null>(null)
   const [userId, setUserId] = useState<number>(1)
+
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const uploadFile = useUploadFileMutation();
 
@@ -14,13 +16,31 @@ export default function FileUpload() {
 
     const formData = new FormData()
     formData.append('src_file', file)
-    formData.append('user_id', userId.toString())    
+    formData.append('user_id', userId.toString())
   }
+
+  useEffect(() => {
+    if (file !== null) {
+      uploadFile.mutate({ file }, {
+        onSuccess() {
+          setFile(null)
+        }
+      })
+    }
+  }, [file])
 
   return (
     <form onSubmit={handleSubmit}>
-      <input type="file" onChange={e => setFile(e.target.files?.[0] || null)} />
-      <button type="submit">Upload</button>
+      <input
+        ref={fileInputRef}
+        type="file"
+        name="fileElem"
+        className="hidden"
+        onChange={e => {
+          setFile(e.target.files?.[0] || null)
+        }}
+      />
+      <button className='' onClick={() => fileInputRef.current?.click()} id="fileUpload" type="button">Upload</button>
     </form>
   )
 }
