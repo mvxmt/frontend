@@ -82,15 +82,16 @@ export default function Home() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center bg-background">
+    <div className="flex justify-center min-h-screen flex-col items-center bg-background">
       <div
-        className={`flex w-full flex-1 flex-col content-stretch items-center ${history.length > 0 ? "justify-between" : "justify-center"} gap-[20px] font-sans text-secondary`}
+        className={`w-full max-w-xl mx-auto gap-[20px] font-sans text-secondary justify-center" ${history.length > 0 ? "justify-between" : "justify-center"}
+        `}
       >
         <AnimatePresence mode="popLayout">
           {history.length < 1 && (
             <motion.h1
               exit={{ opacity: 0, position: "absolute" }}
-              className={`self-center text-7xl`}
+              className={`self-center text-center text-5xl`}
             >
               Welcome{userInfo.data ? " " + userInfo.data.name : ""},
             </motion.h1>
@@ -98,7 +99,7 @@ export default function Home() {
         </AnimatePresence>
 
         {history.length > 0 && (
-          <div className="w-1/2 p-6 lg:pt-24">
+          <div className="w-full p-6 lg:pt-24">
             <ChatThread
               pendingMessage={streamingMessage}
               messageHistory={history}
