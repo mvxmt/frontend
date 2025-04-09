@@ -35,7 +35,7 @@ export const ChatBox: React.FC<{
           <input
             name="query"
             placeholder="What would you like to know..."
-            className="m-3 text-xl col-span-4 col-start-2 w-full bg-background-text min-w-0 placeholder:bg-background-text focus:outline-none"
+            className="m-3 text-secondary text-xl col-span-4 col-start-2 w-full bg-background-text min-w-0 placeholder:bg-background-text focus:outline-none"
             autoComplete="off"
             disabled={isPending}
           ></input>
@@ -79,7 +79,7 @@ export const ChatBox: React.FC<{
               ) : (
                 <button
                   type="button"
-                  className="flex h-full w-full content-stretch items-center justify-center bg-transparent px-5 font-sans text-secondary"
+                  className="text-md flex h-full w-full content-stretch items-center justify-center bg-transparent px-5 font-sans text-secondary"
                   title="Sign In"
                   onClick={handleLogout}
                 >

@@ -91,7 +91,7 @@ export default function Home() {
           {history.length < 1 && (
             <motion.h1
               exit={{ opacity: 0, position: "absolute" }}
-              className={`self-center text-center text-5xl`}
+              className={`self-center text-center text-6xl`}
             >
               Welcome{userInfo.data ? " " + userInfo.data.name : ""},
             </motion.h1>
