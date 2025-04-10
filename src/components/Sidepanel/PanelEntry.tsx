@@ -13,12 +13,12 @@ export default function PanelDrawer({ doc_id,filename }) {
     queryClient.invalidateQueries({ queryKey: ["userFiles"] });;
   }
   return (
-    <div className="grid grid-cols-5 grid-rows-1 gap-5 pb-5 pt-5">
-      <div className="justify-items-start px-2">
+    <div className="grid grid-cols-6 grid-rows-1 gap-5 py-5 justify-center">
+      <div className="content-center px-2">
         <svg
-          width="27"
+          width="20"
           xmlns="http://www.w3.org/2000/svg"
-          height="31.667"
+          height="24.667"
           viewBox="-418 147.667 27 31.667"
           fill="none"
         >
@@ -30,13 +30,13 @@ export default function PanelDrawer({ doc_id,filename }) {
           />
         </svg>
       </div>
-      <div className="col-span-3 justify-center px-2 text-center align-middle font-sans text-2xl text-secondary">
+      <div className="col-start-2 col-span-4 py-2 text-center font-sans text-lg text-secondary">
         {filename}
       </div>
       <button onClick={() => {
           handleFileDelete(doc_id)
         }}>
-        <div className="justify-end px-2">
+        <div className="content-center col-start-5">
           <svg
             width="24"
             xmlns="http://www.w3.org/2000/svg"
