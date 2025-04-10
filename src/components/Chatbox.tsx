@@ -30,12 +30,12 @@ export const ChatBox: React.FC<{
   return (
     <motion.div layout className="mb-4">
       <form action={sendMessage} ref={ref}>
-        <div className="grid h-[75px] w-[960px] flex-shrink-0 grid-cols-6 content-stretch items-center justify-stretch justify-items-center self-center rounded-3xl bg-background-text">
+        <div className="grid flex-shrink-0 grid-cols-6 w-full mt-2 items-center justify-stretch justify-items-center rounded-3xl bg-background-text">
         {isAuthenticated?<PanelDrawer /> :null}
           <input
             name="user_prompt"
             placeholder="What would you like to know..."
-            className="col-span-4 col-start-2 w-full bg-background-text text-2xl text-secondary placeholder:bg-background-text focus:outline-none"
+            className="col-span-4 col-start-2 w-full m-3 bg-background-text text-xl text-secondary placeholder:bg-background-text focus:outline-none"
             autoComplete="off"
             disabled={isPending}
           ></input>
@@ -44,8 +44,8 @@ export const ChatBox: React.FC<{
               <button type="button">
                 <svg
                   className="col-start-6 text-icon"
-                  width="36"
-                  height="36"
+                  width="24"
+                  height="24"
                   viewBox="0 0 24 24"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -67,11 +67,11 @@ export const ChatBox: React.FC<{
             }
             position="top center"
           >
-            <div className="flex h-[75px] w-[282px] flex-col content-stretch items-center justify-items-center rounded-3xl bg-background-text">
+            <div className="flex mb-4 py-3 px-4 flex-col content-stretch items-center justify-items-center rounded-2xl bg-background-text">
               {!userInfo.data ? (
                 <button
                   type="button"
-                  className="flex h-full w-full content-stretch items-center justify-center bg-transparent px-5 font-sans text-secondary"
+                  className="flex h-full w-full content-stretch items-center text-md justify-center bg-transparent px-5 font-sans text-secondary"
                   title="Sign In"
                 >
                   <Link href={`/login/`}>Sign In</Link>
@@ -79,7 +79,7 @@ export const ChatBox: React.FC<{
               ) : (
                 <button
                   type="button"
-                  className="flex h-full w-full content-stretch items-center justify-center bg-transparent px-5 font-sans text-secondary"
+                  className="flex h-full w-full content-stretch items-center text-md justify-center bg-transparent px-5 font-sans text-secondary"
                   title="Sign In"
                   onClick={handleLogout}
                 >
@@ -90,7 +90,7 @@ export const ChatBox: React.FC<{
           </Popup>
         </div>
       </form>
-      <p className="pt-4 text-center">
+      <p className="pt-4 text-sm text-center">
         Powered by Llama 3.2. Accuracy of responses cannot be guaranteed.
       </p>
     </motion.div>
