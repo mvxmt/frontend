@@ -2,6 +2,7 @@
 
 import { ChatBox } from "@/components/Chatbox";
 import ChatThread from "@/components/ChatThread";
+import { getAuthenticatedRoute } from "@/utils/auth";
 import { useUserInfo } from "@/utils/auth/hooks";
 import { ChatMessage, useChatHistory, useTextStream } from "@/utils/chat";
 import { AnimatePresence, motion } from "motion/react";
@@ -17,6 +18,42 @@ export default function Home() {
 
   const formRef = useRef<HTMLFormElement>(null);
   const userInfo = useUserInfo();
+
+  const handleAuthenticatedSubmit = getAuthenticatedRoute(async (token, formData: FormData) => {
+    const userMessage = {
+      role: "user",
+      message: formData.get("user_prompt") as string,
+      id: uuidv4(),
+    } as ChatMessage;
+
+    addToHistory(userMessage);
+    formRef.current?.reset();
+
+    fetch("/api/chat/auth_response", {      headers:{
+        Authorization: `Bearer ${token}`,
+      },
+      method: "POST",
+      body: formData,
+    }).then((response) => {
+      if (response.body) {
+        response.body
+          .pipeThrough(new TextDecoderStream())
+          .pipeTo(
+            new WritableStream({
+              start() {
+                startStreaming();
+              },
+              write(val) {
+                sendToken(val);
+              },
+              close() {
+                endStreaming();
+              },
+            }),
+          );
+      }
+    });
+  });
 
   const handleSubmit = (formData: FormData) => {
     const userMessage = {
@@ -77,7 +114,7 @@ export default function Home() {
           </div>
         )}
         <div className="sticky bottom-0 bg-background z-10">
-        <ChatBox ref={formRef} sendMessage={handleSubmit}></ChatBox>
+        <ChatBox ref={formRef} sendMessage={!userInfo.data? (handleSubmit): (handleAuthenticatedSubmit)}></ChatBox>
         </div>
       </div>
     </div>
