@@ -107,7 +107,6 @@ export default function Home() {
             ></ChatThread>
           </div>
         )}
-          <FileUpload />
         <ChatBox ref={formRef} sendMessage={handleSubmit}></ChatBox>
       </div>
     </div>
