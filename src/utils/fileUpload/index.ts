@@ -1,16 +1,10 @@
-import { getAuthenticatedRoute, UnauthenticatedError } from "../auth"
+import { getAuthenticatedRoute, UnauthenticatedError } from "../auth";
 
 export const uploadFile = getAuthenticatedRoute(async (token, params: {file: File}) => {
-    console.log("Uploading: " , params.file)
-
     const formData = new FormData();
     formData.append("src_file", params.file);
-    
-    for (let [key, value] of formData.entries()) {
-        console.log(`FormData entry - Key: ${key}, Value:`, value);
-      }
 
-    const res = await fetch(`api/file/upload`, {
+    const res = await fetch(`/api/file/upload`, {
         method: "POST",
         headers: {
             Authorization: `Bearer ${token}`,
@@ -28,3 +22,4 @@ export const uploadFile = getAuthenticatedRoute(async (token, params: {file: Fil
 
     return res.json()
 });
+
