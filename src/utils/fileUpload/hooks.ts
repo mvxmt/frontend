@@ -5,4 +5,4 @@ export const useUploadFileMutation = () => {
     return useMutation({
         mutationFn: ({ file } : {file: File}) => uploadFile({ file }),
     });
-};
+};  

@@ -3,9 +3,8 @@ import { getAuthenticatedRoute, UnauthenticatedError } from "../auth"
 export const uploadFile = getAuthenticatedRoute(async (token, params: {file: File}) => {
     const res = await fetch("api/file/upload", {
         method: "POST",
-        body: params.file,
         headers: {
-            Authorization: 'Bearer ${token}',
+            Authorization: `Bearer ${token}`,
         },
     });
 

@@ -13,10 +13,6 @@ export default function FileUpload() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!file) return
-
-    const formData = new FormData()
-    formData.append('src_file', file)
-    formData.append('user_id', userId.toString())
   }
 
   useEffect(() => {
