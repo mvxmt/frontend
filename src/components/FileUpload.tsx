@@ -31,7 +31,6 @@ export default function FileUpload() {
         ref={fileInputRef}
         type="file"
         name="fileElem"
-        className="hidden"
         onChange={e => {
           setFile(e.target.files?.[0] || null)
         }}
