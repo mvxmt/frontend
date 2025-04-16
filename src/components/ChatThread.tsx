@@ -21,9 +21,11 @@ const Message: React.FC<{ message: ChatMessage }> = ({ message }) => {
 export default function ChatThread({
   messageHistory,
   pendingMessage,
+  isPendingMessage,
 }: {
   messageHistory: ChatMessage[];
   pendingMessage: ChatMessage;
+  isPendingMessage?: boolean;
 }) {
   return (
     <div className="flex w-full flex-col gap-4">
@@ -31,12 +33,11 @@ export default function ChatThread({
         {messageHistory.map((m) => (
           <Message key={m.id} message={m} />
         ))}
-        {pendingMessage.message.length > 0 && (
-          <Message
-            key={pendingMessage.id}
-            message={pendingMessage}
-          />
-        )}
+        {pendingMessage.message.length > 0 ? (
+          <Message key={pendingMessage.id} message={pendingMessage} />
+        ) : isPendingMessage ? (
+          <Message key={pendingMessage.id} message={{...pendingMessage, role: "loading"}}></Message>
+        ) : null}
       </AnimatePresence>
     </div>
   );
