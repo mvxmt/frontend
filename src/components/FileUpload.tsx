@@ -6,7 +6,6 @@ import { useQueryClient } from "@tanstack/react-query";
 export default function FileUpload() {
   const queryClient = useQueryClient();
   const [file, setFile] = useState<File | null>(null)
-  const [userId, setUserId] = useState<number>(1)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
