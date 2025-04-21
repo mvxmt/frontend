@@ -28,8 +28,8 @@ export default function PanelDrawer() {
       <Drawer.Trigger>
         <svg
           className="text-icon"
-          width="36"
-          height="36"
+          width="24"
+          height="24"
           viewBox="0 0 24 24"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -52,7 +52,7 @@ export default function PanelDrawer() {
         <Drawer.Overlay className="fixed inset-0 bg-black/0" />
         <Drawer.Content
           data-vaul-no-drag
-          className="fixed bottom-0 left-0 top-0 z-10 flex h-full w-[450px] outline-none"
+          className="fixed bottom-0 left-0 top-0 z-10 flex h-full w-1/4 outline-none"
         >
           <DrawerContent />
         </Drawer.Content>
@@ -64,7 +64,7 @@ function DrawerContent() {
   const userFile = useFileInfoForUser();
   return <div className="flex h-full w-full grow flex-col overflow-y-auto bg-overlay p-5">
     <div className="mx-auto max-w-md">
-      <Drawer.Title className="flex w-full content-stretch items-center justify-center px-1 pt-10 font-sans text-4xl font-semibold text-secondary">
+      <Drawer.Title className="flex w-full content-stretch items-center justify-center px-1 pt-10 font-sans text-2xl font-bold text-secondary">
         Documents
       </Drawer.Title>
       <div className="grid grid-cols-1 gap-4">
@@ -78,4 +78,3 @@ function DrawerContent() {
     </div>
   </div>;
 }
-
