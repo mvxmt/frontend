@@ -24,7 +24,7 @@ export default function Home() {
   const formRef = useRef<HTMLFormElement>(null);
   const userInfo = useUserInfo();
 
-  const handleAuthenticatedSubmit = getAuthenticatedRoute(
+  const handleSubmit = getAuthenticatedRoute(
     async (token, formData: FormData) => {
       const userMessage = {
         role: "user",
@@ -37,12 +37,12 @@ export default function Home() {
 
       startStreaming();
 
-      fetch("/api/chat/auth_response", {
+      fetch("/api/chat/response", {
+        method: "POST",
+        body: formData,
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        method: "POST",
-        body: formData,
       }).then((response) => {
         if (response.body) {
           response.body.pipeThrough(new TextDecoderStream()).pipeTo(
@@ -59,37 +59,6 @@ export default function Home() {
       });
     },
   );
-
-  const handleSubmit = (formData: FormData) => {
-    const userMessage = {
-      role: "user",
-      message: formData.get("user_prompt") as string,
-      id: uuidv4(),
-    } as ChatMessage;
-
-    addToHistory(userMessage);
-    formRef.current?.reset();
-
-    startStreaming();
-
-    fetch("/api/chat/response", {
-      method: "POST",
-      body: formData,
-    }).then((response) => {
-      if (response.body) {
-        response.body.pipeThrough(new TextDecoderStream()).pipeTo(
-          new WritableStream({
-            write(val) {
-              sendToken(val);
-            },
-            close() {
-              endStreaming();
-            },
-          }),
-        );
-      }
-    });
-  };
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background">
@@ -117,12 +86,7 @@ export default function Home() {
           </div>
         )}
         <div className="sticky bottom-0 z-10 bg-background">
-          <ChatBox
-            ref={formRef}
-            sendMessage={
-              !userInfo.data ? handleSubmit : handleAuthenticatedSubmit
-            }
-          ></ChatBox>
+          <ChatBox ref={formRef} sendMessage={handleSubmit}></ChatBox>
         </div>
       </div>
     </div>
