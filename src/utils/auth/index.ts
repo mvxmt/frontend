@@ -66,9 +66,9 @@ export function getAuthenticatedRoute<T, U>(
     const store = getDefaultStore();
     const accessToken = store.get(tokenAtom);
 
-    // if (!accessToken) {
-    //   throw new UnauthenticatedError();
-    // }
+    if (!accessToken) {
+      throw new UnauthenticatedError();
+    }
 
     try {
       return await f(accessToken, extra);

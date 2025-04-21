@@ -2,9 +2,10 @@
 
 import { ChatBox } from "@/components/Chatbox";
 import ChatThread from "@/components/ChatThread";
-import { getAuthenticatedRoute } from "@/utils/auth";
 import { useUserInfo } from "@/utils/auth/hooks";
+import { tokenAtom } from "@/utils/auth/store";
 import { ChatMessage, useChatHistory, useTextStream } from "@/utils/chat";
+import { useAtomValue } from "jotai";
 import { AnimatePresence, motion } from "motion/react";
 import { useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -20,12 +21,12 @@ export default function Home() {
   } = useTextStream({
     addToHistory,
   });
+  const token = useAtomValue(tokenAtom)
 
   const formRef = useRef<HTMLFormElement>(null);
   const userInfo = useUserInfo();
 
-  const handleSubmit = getAuthenticatedRoute(
-    async (token, formData: FormData) => {
+  const handleSubmit = async (token: string | undefined, formData: FormData) => {
       const userMessage = {
         role: "user",
         message: formData.get("user_prompt") as string,
@@ -57,8 +58,7 @@ export default function Home() {
           );
         }
       });
-    },
-  );
+    }
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background">
@@ -86,7 +86,7 @@ export default function Home() {
           </div>
         )}
         <div className="sticky bottom-0 z-10 bg-background">
-          <ChatBox ref={formRef} sendMessage={handleSubmit}></ChatBox>
+          <ChatBox ref={formRef} sendMessage={(d) => handleSubmit(token, d)}></ChatBox>
         </div>
       </div>
     </div>
