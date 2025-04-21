@@ -19,7 +19,7 @@ export default function Home() {
   const formRef = useRef<HTMLFormElement>(null);
   const userInfo = useUserInfo();
 
-  const handleAuthenticatedSubmit = getAuthenticatedRoute(async (token, formData: FormData) => {
+  const handleSubmit = getAuthenticatedRoute(async (token, formData: FormData) => {
     const userMessage = {
       role: "user",
       message: formData.get("user_prompt") as string,
@@ -29,11 +29,12 @@ export default function Home() {
     addToHistory(userMessage);
     formRef.current?.reset();
 
-    fetch("/api/chat/auth_response", {      headers:{
-        Authorization: `Bearer ${token}`,
-      },
+    fetch("/api/chat/response", {      
       method: "POST",
       body: formData,
+      headers:{
+        Authorization: `Bearer ${token}`,
+      },
     }).then((response) => {
       if (response.body) {
         response.body
@@ -54,40 +55,6 @@ export default function Home() {
       }
     });
   });
-
-  const handleSubmit = (formData: FormData) => {
-    const userMessage = {
-      role: "user",
-      message: formData.get("user_prompt") as string,
-      id: uuidv4(),
-    } as ChatMessage;
-
-    addToHistory(userMessage);
-    formRef.current?.reset();
-
-    fetch("/api/chat/response", {
-      method: "POST",
-      body: formData,
-    }).then((response) => {
-      if (response.body) {
-        response.body
-          .pipeThrough(new TextDecoderStream())
-          .pipeTo(
-            new WritableStream({
-              start() {
-                startStreaming();
-              },
-              write(val) {
-                sendToken(val);
-              },
-              close() {
-                endStreaming();
-              },
-            }),
-          );
-      }
-    });
-  };
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background">
@@ -114,7 +81,7 @@ export default function Home() {
           </div>
         )}
         <div className="sticky bottom-0 bg-background z-10">
-        <ChatBox ref={formRef} sendMessage={!userInfo.data? (handleSubmit): (handleAuthenticatedSubmit)}></ChatBox>
+        <ChatBox ref={formRef} sendMessage={handleSubmit} ></ChatBox>
         </div>
       </div>
     </div>
