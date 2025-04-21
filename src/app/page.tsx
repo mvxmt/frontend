@@ -8,14 +8,6 @@ import { AnimatePresence, motion } from "motion/react";
 import { useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-import FileUpload from "@/components/FileUpload"
-
-type Response = {
-  model: string;
-  created_at: string;
-  response: string;
-  done: boolean;
-};
 
 export default function Home() {
   const { history, addToHistory } = useChatHistory();
@@ -37,42 +29,20 @@ export default function Home() {
     addToHistory(userMessage);
     formRef.current?.reset();
 
-    fetch("http://mvxmt.tail8d155b.ts.net:11434/api/generate", {
+    fetch("/api/chat/response", {
       method: "POST",
-      body: JSON.stringify({
-        model: "llama3.2",
-        prompt: formData.get("query")!,
-        stream: true,
-      }),
+      body: formData,
     }).then((response) => {
       if (response.body) {
         response.body
           .pipeThrough(new TextDecoderStream())
-          .pipeThrough(
-            new TransformStream<string, Response>({
-              async transform(chunk, controller) {
-                try {
-                  controller.enqueue(JSON.parse(chunk) as Response);
-                } catch {
-                  chunk
-                    .split("\n")
-                    .filter((v) => v.length > 0)
-                    .map((v) => {
-                      console.log(v);
-                      return JSON.parse(v) as Response;
-                    })
-                    .forEach((v) => controller.enqueue(v));
-                }
-              },
-            }),
-          )
           .pipeTo(
             new WritableStream({
               start() {
                 startStreaming();
               },
               write(val) {
-                sendToken(val.response);
+                sendToken(val);
               },
               close() {
                 endStreaming();
