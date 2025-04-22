@@ -1,19 +1,19 @@
 "use client";
 
 import Header from "@/components/Login/Header";
-import Login from "@/components/Login/Login";
+import Register from "@/components/Login/Register";
 
-export default function LoginPage() {
+export default function RegistrationPage() {
   return (
     <div className="flex min-h-screen flex-col items-center bg-background">
       <Header
-        heading="Login to your account"
-        paragraph="Don't have an account yet?"
-        linkName="Sign Up"
-        linkUrl="/registration/"
+        heading="Create an Account"
+        paragraph="Sign up for a new account."
+        linkName=""
+        linkUrl="#"
       />
       <div className="w-80 flex-col items-center justify-center">
-        <Login />
+        <Register />
       </div>
     </div>
   );

@@ -52,6 +52,11 @@ export default function Login() {
     loginMutation.mutate(data);
   }
 
+  function handleCancel(e) {
+    e.preventDefault();
+    router.replace("/")
+  }
+
   return (
     <form onSubmit={handleLogin}>
       <Input inputName="email" placeholder="Email Address" type="text" />
@@ -60,6 +65,8 @@ export default function Login() {
       <span className="font-bold font-sans text-red-500">{formError?.format().password?._errors.join("")}</span>
       <span className="mt-2 font-bold font-sans text-red-500 text-center">{loginMutation.error?.message}</span>
       <Button text="Login" />
+      <button className="group relative flex w-full justify-center rounded-md border border-transparent bg-purple-600 px-4 py-2 font-sans text-lg font-medium text-secondary hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+      onClick={handleCancel}>Cancel</button>
     </form>
   );
 }
