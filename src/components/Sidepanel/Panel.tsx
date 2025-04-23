@@ -4,6 +4,7 @@ import { Drawer } from "vaul";
 import React from "react";
 import PanelEntry from "@/components/Sidepanel/PanelEntry";
 import { useFileInfoForUser } from "@/utils/fileRetrieval/hooks";
+import FileUpload from "../FileUpload";
 
 export default function PanelDrawer() {
 
@@ -12,7 +13,7 @@ export default function PanelDrawer() {
   const onDrawerOpen = (open) => {
     if (open) {
       console.log("Drawer Opened!");
-      }
+    }
   };
 
   return (
@@ -71,6 +72,9 @@ function DrawerContent() {
           {userFile.isSuccess ? userFile.data.map(v => <PanelEntry key={v.id} doc_id={v.id} filename={v.filename} />) : null}
         </div>
       </div>
+    </div>
+    <div className="flex flex-col h-screen justify-end w-full items-center">
+      <FileUpload />
     </div>
   </div>;
 }

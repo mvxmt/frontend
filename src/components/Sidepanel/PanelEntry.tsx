@@ -9,8 +9,10 @@ export default function PanelDrawer({ doc_id,filename }) {
 
   const handleFileDelete=(doc_id:string)=>{
     deleteFile.mutate({id:doc_id});
+
     //Force Refetch
-    queryClient.invalidateQueries({ queryKey: ["userFiles"] });;
+    //BUG: HAVE TO CLICK TWICE TO REFRESH
+    queryClient.invalidateQueries({ queryKey: ["userFiles"] });
   }
   return (
     <div className="grid grid-cols-6 grid-rows-1 gap-5 py-5 justify-center">
@@ -24,8 +26,8 @@ export default function PanelDrawer({ doc_id,filename }) {
         >
           <path
             d="M-418 152.417c0-2.624 2.015-4.75 4.5-4.75h12c5.799 0 10.5 4.962 10.5 11.083v15.833c0 2.624-2.015 4.75-4.5 4.75h-18c-2.485 0-4.5-2.126-4.5-4.75zm15-1.584h-10.5c-.828 0-1.5.709-1.5 1.584v22.166c0 .875.672 1.584 1.5 1.584h18c.828 0 1.5-.709 1.5-1.584V158.75h-9zm8.376 4.75c-.964-2.329-2.959-4.073-5.376-4.591v4.591z"
-            fill-rule="evenodd"
-            clip-rule="evenodd"
+            fillRule="evenodd"
+            clipRule="evenodd"
             fill="currentColor"
           />
         </svg>
@@ -50,8 +52,8 @@ export default function PanelDrawer({ doc_id,filename }) {
             />
             <path
               d="M-88.5 163.5c0-6.075 4.925-11 11-11s11 4.925 11 11-4.925 11-11 11-11-4.925-11-11m11 9a9 9 0 0 1-9-9 9 9 0 0 1 9-9 9 9 0 0 1 9 9 9 9 0 0 1-9 9"
-              fill-rule="evenodd"
-              clip-rule="evenodd"
+              fillRule="evenodd"
+              clipRule="evenodd"
               fill="currentColor"
             />
           </svg>
