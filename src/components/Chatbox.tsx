@@ -5,9 +5,10 @@ import { useAtomValue } from "jotai";
 import { motion } from "motion/react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { FormHTMLAttributes, Ref } from "react";
+import { FormHTMLAttributes, Ref, useContext } from "react";
 import ChatHistoryPannel from "./ChatHistory/Pannel";
 import PanelDrawer from "./Sidepanel/Panel";
+import { ChatHistoryContext } from "./ChatHistory/Context";
 
 const Popup = dynamic(() => import("reactjs-popup"), { ssr: false });
 
@@ -38,21 +39,24 @@ const UserIcon = () => (
 export const ChatBox: React.FC<{
   sendMessage?: FormHTMLAttributes<HTMLFormElement>["action"];
   isPending?: boolean;
-  onSelectChatThread: (id: string) => void;
-  onResetNewChatThread: () => void;
   ref?: Ref<HTMLFormElement>;
-}> = ({ sendMessage, isPending, ref, onSelectChatThread, onResetNewChatThread }) => {
+}> = ({
+  sendMessage,
+  isPending,
+  ref
+}) => {
   const isAuthenticated = useAtomValue(isAuthenticatedAtom);
+  const chatHistoryContext = useContext(ChatHistoryContext)
 
   return (
     <motion.div layout className="mb-4">
       <form action={sendMessage} ref={ref}>
-        <div className="mt-2 grid w-full flex-shrink-0 grid-cols-7 items-center justify-stretch justify-items-center rounded-3xl bg-background-text">
+        <div className="mt-2 grid w-full flex-shrink-0 grid-cols-7 items-center justify-stretch justify-items-center gap-4 rounded-3xl bg-background-text">
           {isAuthenticated ? <PanelDrawer /> : null}
           <input
             name="user_prompt"
             placeholder="What would you like to know..."
-            className="col-span-4 m-3 w-full bg-background-text text-xl text-secondary placeholder:bg-background-text focus:outline-none"
+            className={`${isAuthenticated ? "col-span-4" : "col-span-5"} col-start-2 m-3 w-full bg-background-text text-xl text-secondary placeholder:bg-background-text focus:outline-none`}
             autoComplete="off"
             disabled={isPending}
           ></input>
@@ -76,30 +80,38 @@ export const ChatBox: React.FC<{
               </div>
             </Popup>
           ) : (
-            <ChatHistoryPannel onSelectChatThread={onSelectChatThread}>
-              <UserIcon />
+            <ChatHistoryPannel>
+              <button className="justify-self-end" type="button">
+                <UserIcon />
+              </button>
             </ChatHistoryPannel>
           )}
-          <button type="button" onClick={onResetNewChatThread}>
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
+          {isAuthenticated && (
+            <button
+              className="justify-self-start"
+              type="button"
+              onClick={() => chatHistoryContext.resetChatId()}
             >
-              <path
-                d="M12 6C12.5523 6 13 6.44772 13 7V11H17C17.5523 11 18 11.4477 18 12C18 12.5523 17.5523 13 17 13H13V17C13 17.5523 12.5523 18 12 18C11.4477 18 11 17.5523 11 17V13H7C6.44772 13 6 12.5523 6 12C6 11.4477 6.44772 11 7 11H11V7C11 6.44772 11.4477 6 12 6Z"
-                fill="currentColor"
-              />
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M5 22C3.34315 22 2 20.6569 2 19V5C2 3.34315 3.34315 2 5 2H19C20.6569 2 22 3.34315 22 5V19C22 20.6569 20.6569 22 19 22H5ZM4 19C4 19.5523 4.44772 20 5 20H19C19.5523 20 20 19.5523 20 19V5C20 4.44772 19.5523 4 19 4H5C4.44772 4 4 4.44772 4 5V19Z"
-                fill="currentColor"
-              />
-            </svg>
-          </button>
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 6C12.5523 6 13 6.44772 13 7V11H17C17.5523 11 18 11.4477 18 12C18 12.5523 17.5523 13 17 13H13V17C13 17.5523 12.5523 18 12 18C11.4477 18 11 17.5523 11 17V13H7C6.44772 13 6 12.5523 6 12C6 11.4477 6.44772 11 7 11H11V7C11 6.44772 11.4477 6 12 6Z"
+                  fill="currentColor"
+                />
+                <path
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M5 22C3.34315 22 2 20.6569 2 19V5C2 3.34315 3.34315 2 5 2H19C20.6569 2 22 3.34315 22 5V19C22 20.6569 20.6569 22 19 22H5ZM4 19C4 19.5523 4.44772 20 5 20H19C19.5523 20 20 19.5523 20 19V5C20 4.44772 19.5523 4 19 4H5C4.44772 4 4 4.44772 4 5V19Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </button>
+          )}
         </div>
       </form>
       <p className="pt-4 text-center text-sm">

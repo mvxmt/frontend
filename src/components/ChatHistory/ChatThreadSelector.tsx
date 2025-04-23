@@ -11,9 +11,11 @@ export default function ChatThreadSelector({
   ct_id,
   name,
   onSelect,
+  selected
 }: {
   ct_id: string;
   name: string;
+  selected: boolean
   onSelect: () => void;
 }) {
   const deleteMutation = useDeleteChatThread();
@@ -24,7 +26,7 @@ export default function ChatThreadSelector({
   return (
     <div
       onClick={onSelect}
-      className="grid cursor-pointer grid-cols-6 grid-rows-1 justify-center gap-5 rounded-full bg-gray-700/30 py-3"
+      className={`grid cursor-pointer grid-cols-6 grid-rows-1 justify-center gap-5 rounded-full ${selected ? "bg-gray-500/30 border-2 box-content" : "bg-gray-700/30"}  py-3`}
     >
       <div className="col-span-4 py-2 text-center font-sans text-lg text-secondary">
         {name}

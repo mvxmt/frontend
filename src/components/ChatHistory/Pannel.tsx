@@ -3,14 +3,14 @@
 import { logout } from "@/utils/auth";
 import { useChatHistoryForUser } from "@/utils/chatHistory/hooks";
 import { useQueryClient } from "@tanstack/react-query";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Drawer } from "vaul";
 import ChatThreadSelector from "./ChatThreadSelector";
+import { ChatHistoryContext } from "./Context";
 
 export default function ChatHistoryPannel({
   children,
-  onSelectChatThread,
-}: React.PropsWithChildren<{ onSelectChatThread: (id: string) => void }>) {
+}: React.PropsWithChildren) {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const { data: chatThreads } = useChatHistoryForUser();
@@ -20,13 +20,11 @@ export default function ChatHistoryPannel({
     await queryClient.resetQueries();
   };
 
-  useEffect(() => {
-    console.log(onSelectChatThread)
-  }, [onSelectChatThread])
+  const chatHistoryContext = useContext(ChatHistoryContext)
 
   return (
     <Drawer.Root direction="right" open={open} onOpenChange={setOpen}>
-      <Drawer.Trigger>{children}</Drawer.Trigger>
+      <Drawer.Trigger asChild>{children}</Drawer.Trigger>
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0" />
         <Drawer.Content
@@ -43,7 +41,8 @@ export default function ChatHistoryPannel({
                   {chatThreads &&
                     chatThreads.map((ct) => (
                       <ChatThreadSelector
-                        onSelect={() => onSelectChatThread(ct.id)}
+                        onSelect={() => chatHistoryContext.setActiveChatId(ct.id)}
+                        selected={chatHistoryContext.activeChatId == ct.id}
                         key={ct.id}
                         name={ct.name}
                         ct_id={ct.id}
