@@ -20,6 +20,7 @@ export function useTextStream({
     role: "assistant",
     id: get(uuidAtom)
   } as ChatMessage)), [streamingStringAtom, uuidAtom])
+  const [isStreaming, setIsStreaming] = useState(false)
 
   const setUUID = useSetAtom(uuidAtom)
   const setStreamingString = useSetAtom(streamingStringAtom)
@@ -27,6 +28,7 @@ export function useTextStream({
 
   const start = () => {
     setUUID(() => v4())
+    setIsStreaming(true)
   }
 
   const sendToken = (s: string) => {
@@ -41,9 +43,10 @@ export function useTextStream({
     console.log(`end: ${JSON.stringify(chatMessage)}`)
     addToHistory(chatMessage);
     setStreamingString([]);
+    setIsStreaming(false)
   };
 
-  return [sendToken, start, end, streamingMessage] as const;
+  return {sendToken, start, end, streamingMessage, isStreaming} as const;
 }
 
 export function useChatHistory() {
