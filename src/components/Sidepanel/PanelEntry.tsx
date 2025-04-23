@@ -8,12 +8,13 @@ export default function PanelDrawer({ doc_id,filename }) {
   const queryClient = useQueryClient();
 
   const handleFileDelete=(doc_id:string)=>{
-    deleteFile.mutate({id:doc_id});
-
-    //Force Refetch
-    //BUG: HAVE TO CLICK TWICE TO REFRESH
-    queryClient.invalidateQueries({ queryKey: ["userFiles"] });
+    deleteFile.mutate({id:doc_id}, {
+      onSuccess() {
+        queryClient.invalidateQueries({ queryKey: ["userFiles"] });
+      }
+    });
   }
+  
   return (
     <div className="grid grid-cols-6 grid-rows-1 gap-5 py-5 justify-center">
       <div className="content-center px-2">
