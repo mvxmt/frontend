@@ -43,7 +43,7 @@ export const getChatThreadById = getAuthenticatedRoute(
     }
 
     if (!res.ok) {
-      throw new Error("get thread by id");
+      throw new Error("failed to get thread by id");
     }
 
     return (await res.json()) as {
@@ -72,6 +72,7 @@ export const appendMessageToChatThreadById = getAuthenticatedRoute(
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
         },
         body: JSON.stringify(message),
       },

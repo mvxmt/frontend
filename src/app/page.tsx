@@ -1,18 +1,20 @@
 "use client";
 
 import { ChatBox } from "@/components/Chatbox";
-import ChatHistoryPannel from "@/components/ChatHistory/Pannel";
 import ChatThread from "@/components/ChatThread";
 import { useUserInfo } from "@/utils/auth/hooks";
 import { tokenAtom } from "@/utils/auth/store";
 import { ChatMessage, useChatHistory, useTextStream } from "@/utils/chat";
 import { useAtomValue } from "jotai";
 import { AnimatePresence, motion } from "motion/react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { ulid } from "ulid";
 import { v4 as uuidv4 } from "uuid";
 
 export default function Home() {
-  const { history, addToHistory } = useChatHistory();
+  const [selectedChatThreadId, setSelectedChatThreadId] =
+    useState<string>(() => uuidv4());
+  const { history, addToHistory } = useChatHistory(selectedChatThreadId);
   const {
     sendToken,
     start: startStreaming,
@@ -22,44 +24,47 @@ export default function Home() {
   } = useTextStream({
     addToHistory,
   });
-  const token = useAtomValue(tokenAtom)
+  const token = useAtomValue(tokenAtom);
 
   const formRef = useRef<HTMLFormElement>(null);
   const userInfo = useUserInfo();
 
-  const handleSubmit = async (token: string | undefined, formData: FormData) => {
-      const userMessage = {
-        role: "user",
-        message: formData.get("user_prompt") as string,
-        id: uuidv4(),
-      } as ChatMessage;
+  const handleSubmit = async (
+    token: string | undefined,
+    formData: FormData,
+  ) => {
+    const userMessage = {
+      role: "user",
+      message: formData.get("user_prompt") as string,
+      id: ulid(),
+    } as ChatMessage;
 
-      addToHistory(userMessage);
-      formRef.current?.reset();
+    addToHistory(userMessage);
+    formRef.current?.reset();
 
-      startStreaming();
+    startStreaming();
 
-      fetch("/api/chat/response", {
-        method: "POST",
-        body: formData,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }).then((response) => {
-        if (response.body) {
-          response.body.pipeThrough(new TextDecoderStream()).pipeTo(
-            new WritableStream({
-              write(val) {
-                sendToken(val);
-              },
-              close() {
-                endStreaming();
-              },
-            }),
-          );
-        }
-      });
-    }
+    fetch("/api/chat/response", {
+      method: "POST",
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then((response) => {
+      if (response.body) {
+        response.body.pipeThrough(new TextDecoderStream()).pipeTo(
+          new WritableStream({
+            write(val) {
+              sendToken(val);
+            },
+            close() {
+              endStreaming();
+            },
+          }),
+        );
+      }
+    });
+  };
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background">
@@ -87,9 +92,13 @@ export default function Home() {
           </div>
         )}
         <div className="sticky bottom-0 z-10 bg-background">
-          <ChatBox ref={formRef} sendMessage={(d) => handleSubmit(token, d)}></ChatBox>
+          <ChatBox
+            onSelectChatThread={setSelectedChatThreadId}
+            onResetNewChatThread={() => setSelectedChatThreadId(uuidv4())}
+            ref={formRef}
+            sendMessage={(d) => handleSubmit(token, d)}
+          ></ChatBox>
         </div>
-        <ChatHistoryPannel/>
       </div>
     </div>
   );

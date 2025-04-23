@@ -3,20 +3,26 @@
 import { logout } from "@/utils/auth";
 import { useChatHistoryForUser } from "@/utils/chatHistory/hooks";
 import { useQueryClient } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Drawer } from "vaul";
 import ChatThreadSelector from "./ChatThreadSelector";
 
 export default function ChatHistoryPannel({
   children,
-}: React.PropsWithChildren) {
+  onSelectChatThread,
+}: React.PropsWithChildren<{ onSelectChatThread: (id: string) => void }>) {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
+  const { data: chatThreads } = useChatHistoryForUser();
 
   const handleLogout = async () => {
     await logout();
     await queryClient.resetQueries();
   };
+
+  useEffect(() => {
+    console.log(onSelectChatThread)
+  }, [onSelectChatThread])
 
   return (
     <Drawer.Root direction="right" open={open} onOpenChange={setOpen}>
@@ -27,7 +33,25 @@ export default function ChatHistoryPannel({
           data-vaul-no-drag
           className="fixed bottom-0 right-0 top-0 z-10 flex h-full w-1/4 outline-none"
         >
-          <DrawerContent>
+          <div className="flex h-full w-full grow flex-col overflow-y-auto bg-overlay p-5">
+            <div className="mx-auto max-w-md">
+              <Drawer.Title className="flex w-full content-stretch items-center justify-center px-1 pt-10 font-sans text-2xl font-bold text-secondary">
+                Chat Threads
+              </Drawer.Title>
+              <div className="grid grid-cols-1 gap-4">
+                <div className="mb-2 mt-2 space-y-4 text-secondary">
+                  {chatThreads &&
+                    chatThreads.map((ct) => (
+                      <ChatThreadSelector
+                        onSelect={() => onSelectChatThread(ct.id)}
+                        key={ct.id}
+                        name={ct.name}
+                        ct_id={ct.id}
+                      />
+                    ))}
+                </div>
+              </div>
+            </div>
             <div className="flex h-screen w-full flex-col items-center justify-end">
               <button
                 className="bg-background px-14 py-4 font-sans text-xl font-semibold text-secondary"
@@ -37,28 +61,9 @@ export default function ChatHistoryPannel({
                 Logout
               </button>
             </div>
-          </DrawerContent>
+          </div>
         </Drawer.Content>
       </Drawer.Portal>
     </Drawer.Root>
-  );
-}
-function DrawerContent({ children }: React.PropsWithChildren) {
-  const { data: chatThreads } = useChatHistoryForUser();
-
-  return (
-    <div className="flex h-full w-full grow flex-col overflow-y-auto bg-overlay p-5">
-      <div className="mx-auto max-w-md">
-        <Drawer.Title className="flex w-full content-stretch items-center justify-center px-1 pt-10 font-sans text-2xl font-bold text-secondary">
-          Chat Threads
-        </Drawer.Title>
-        <div className="grid grid-cols-1 gap-4">
-          <div className="mb-2 mt-2 space-y-4 text-secondary">
-            {chatThreads && chatThreads.map(ct => <ChatThreadSelector key={ct.id} name={ct.name} ct_id={ct.id}/>)}
-          </div>
-        </div>
-      </div>
-      {children}
-    </div>
   );
 }

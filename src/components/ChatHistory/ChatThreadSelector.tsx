@@ -10,9 +10,11 @@ import { useState } from "react";
 export default function ChatThreadSelector({
   ct_id,
   name,
+  onSelect,
 }: {
   ct_id: string;
   name: string;
+  onSelect: () => void;
 }) {
   const deleteMutation = useDeleteChatThread();
   const renameMutation = useRenameChatThread();
@@ -20,7 +22,10 @@ export default function ChatThreadSelector({
   const [renameModalOpen, setRenameModalOpen] = useState(false);
 
   return (
-    <div className="grid grid-cols-6 grid-rows-1 justify-center gap-5 rounded-full bg-gray-700/30 py-3">
+    <div
+      onClick={onSelect}
+      className="grid cursor-pointer grid-cols-6 grid-rows-1 justify-center gap-5 rounded-full bg-gray-700/30 py-3"
+    >
       <div className="col-span-4 py-2 text-center font-sans text-lg text-secondary">
         {name}
       </div>
@@ -60,7 +65,8 @@ export default function ChatThreadSelector({
         </div>
       </RenameDialog>
       <button
-        onClick={() => {
+        onClick={(e) => {
+          e.stopPropagation()
           deleteMutation.mutate({ id: ct_id });
         }}
       >

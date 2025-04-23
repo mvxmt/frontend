@@ -1,7 +1,9 @@
 import { atom, getDefaultStore, useAtomValue, useSetAtom } from "jotai";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ulid } from "ulid";
 import { z } from "zod";
+import { appendMessageToChatThreadById, getChatThreadById } from "./chatHistory";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const zChatMessage = z.object({
   id: z.string().ulid(),
@@ -34,12 +36,12 @@ export function useTextStream({
   } as ChatMessage)), [streamingStringAtom, ulidAtom])
   const [isStreaming, setIsStreaming] = useState(false)
 
-  const setUUID = useSetAtom(ulidAtom);
+  const setULID = useSetAtom(ulidAtom);
   const setStreamingString = useSetAtom(streamingStringAtom);
   const streamingMessage = useAtomValue(streamingMessageAtom);
 
   const start = () => {
-    setUUID(() => ulid())
+    setULID(() => ulid())
     setIsStreaming(true)
   }
 
@@ -61,11 +63,40 @@ export function useTextStream({
   return {sendToken, start, end, streamingMessage, isStreaming} as const;
 }
 
-export function useChatHistory() {
+export function useChatHistory(chatThreadId?: string) {
+  const qc = useQueryClient()
+  const chatThreadExists = useRef(false)
   const [history, setHistory] = useState([] as ChatMessage[]);
+
+  useEffect(() => {
+    chatThreadExists.current = false
+    if(chatThreadId) {
+      getChatThreadById({id: chatThreadId}).then(ct => {
+        setHistory(ct.thread)
+        chatThreadExists.current = true
+      }).catch(() => {
+        setHistory([])
+      })
+    }
+  }, [chatThreadId])
+
+  const commitMessageToServer = async (cm: StableChatMessage) => {
+    if(chatThreadId) {
+      await appendMessageToChatThreadById({
+        chat_thread_id: chatThreadId,
+        message: cm
+      })
+
+      if(!chatThreadExists.current) {
+        qc.invalidateQueries({queryKey: ["chatHistory"]})
+        chatThreadExists.current = true
+      }
+    }
+  }
 
   const addToHistory = (cm: ChatMessage) => {
     setHistory((v) => [...v, cm]);
+    commitMessageToServer(cm as StableChatMessage)
   };
 
   return { history, addToHistory };

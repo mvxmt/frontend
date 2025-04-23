@@ -19,6 +19,9 @@ export default function RenameDialog({
           <Dialog.Title className="m-0 text-[17px] font-medium">
             Rename Chat Thread
           </Dialog.Title>
+          <Dialog.Description className="sr-only">
+            Enter the new name for your chat thread.
+          </Dialog.Description>
           <form
             className="flex w-full flex-col space-y-4 pt-4"
             action={(f) => {
