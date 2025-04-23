@@ -106,3 +106,27 @@ export const deleteThreadById = getAuthenticatedRoute(
     }
   },
 );
+
+const renameThreadByIdSchema =threadByIdSchema.merge(z.object({
+  name: z.string().min(2)
+}))
+
+export const renameThreadById = getAuthenticatedRoute(
+  async (token, params: z.infer<typeof renameThreadByIdSchema>) => {
+    const { id, name } = await renameThreadByIdSchema.parseAsync(params);
+    const res = await fetch(`/api/chatHistory/rename?chat_thread_id=${id}&name=${name}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (res.status === 401) {
+      throw new UnauthenticatedError();
+    }
+
+    if (!res.ok) {
+      throw new Error("failed to rename chat thread");
+    }
+  },
+)

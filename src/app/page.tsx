@@ -1,6 +1,7 @@
 "use client";
 
 import { ChatBox } from "@/components/Chatbox";
+import ChatHistoryPannel from "@/components/ChatHistory/Pannel";
 import ChatThread from "@/components/ChatThread";
 import { useUserInfo } from "@/utils/auth/hooks";
 import { tokenAtom } from "@/utils/auth/store";
@@ -88,6 +89,7 @@ export default function Home() {
         <div className="sticky bottom-0 z-10 bg-background">
           <ChatBox ref={formRef} sendMessage={(d) => handleSubmit(token, d)}></ChatBox>
         </div>
+        <ChatHistoryPannel/>
       </div>
     </div>
   );
