@@ -5,7 +5,8 @@ import {
   useRenameChatThread,
 } from "@/utils/chatHistory/hooks";
 import RenameDialog from "./RenameDialog";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { ChatHistoryContext } from "./Context";
 
 export default function ChatThreadSelector({
   ct_id,
@@ -18,6 +19,7 @@ export default function ChatThreadSelector({
   selected: boolean
   onSelect: () => void;
 }) {
+  const chatHistoryContext = useContext(ChatHistoryContext)
   const deleteMutation = useDeleteChatThread();
   const renameMutation = useRenameChatThread();
 
@@ -69,7 +71,13 @@ export default function ChatThreadSelector({
       <button
         onClick={(e) => {
           e.stopPropagation()
-          deleteMutation.mutate({ id: ct_id });
+          deleteMutation.mutate({ id: ct_id }, {
+            onSuccess: (_, v) => {
+              if(v.id === chatHistoryContext.activeChatId) {
+                chatHistoryContext.resetChatId()
+              }
+            }
+          });
         }}
       >
         <div className="content-center">

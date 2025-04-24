@@ -1,9 +1,10 @@
-import { atom, getDefaultStore, useAtomValue, useSetAtom } from "jotai";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useMemo, useRef, useState } from "react";
 import { ulid } from "ulid";
 import { z } from "zod";
-import { appendMessageToChatThreadById, getChatThreadById } from "./chatHistory";
-import { useQueryClient } from "@tanstack/react-query";
+import { appendMessageToChatThreadById, getChatThreadById, renameThreadById } from "./chatHistory";
+import { useAtomValue } from "jotai";
+import { isAuthenticatedAtom } from "./auth/store";
 
 export const zChatMessage = z.object({
   id: z.string().ulid(),
@@ -27,18 +28,21 @@ export function useTextStream({
 }: {
   addToHistory: (cm: ChatMessage) => void;
 }) {
-  const ulidAtom = useMemo(() => atom(ulid()), [])
-  const streamingStringAtom = useMemo(() => atom([] as string[]), [])
-  const streamingMessageAtom = useMemo(() => atom(get => ({
-    message: get(streamingStringAtom).join(""),
-    role: "assistant",
-    id: get(ulidAtom)
-  } as ChatMessage)), [streamingStringAtom, ulidAtom])
-  const [isStreaming, setIsStreaming] = useState(false)
+  const [currentUlid, setULID] = useState(ulid())
+  const [streamingString, setStreamingString] = useState<string[]>([])
 
-  const setULID = useSetAtom(ulidAtom);
-  const setStreamingString = useSetAtom(streamingStringAtom);
-  const streamingMessage = useAtomValue(streamingMessageAtom);
+  const streamingMessage = useMemo<ChatMessage>(() => {
+    return {
+      message: streamingString.join(""),
+      role: "assistant",
+      id: currentUlid
+    }
+  }, [streamingString, currentUlid])
+
+  const streamingMessageRef = useRef(streamingMessage)
+  streamingMessageRef.current = streamingMessage
+
+  const [isStreaming, setIsStreaming] = useState(false)
 
   const start = () => {
     setULID(() => ulid())
@@ -51,11 +55,7 @@ export function useTextStream({
 
   const end = () => {
     // We must do this since this function is called outside of React in a promise callback
-    const defaultStore = getDefaultStore();
-
-    const chatMessage = defaultStore.get(streamingMessageAtom);
-    console.log(`end: ${JSON.stringify(chatMessage)}`);
-    addToHistory(chatMessage);
+    addToHistory(streamingMessageRef.current);
     setStreamingString([]);
     setIsStreaming(false)
   };
@@ -66,10 +66,14 @@ export function useTextStream({
 export function useChatHistory(chatThreadId?: string) {
   const qc = useQueryClient()
   const chatThreadExists = useRef(false)
-  const [history, setHistory] = useState([] as ChatMessage[]);
+  const isAuthenticated = useAtomValue(isAuthenticatedAtom)
 
-  useEffect(() => {
-    chatThreadExists.current = false
+  const [history, setHistory] = useState([] as ChatMessage[]);
+  const [prevThreadId, setPrevTreadId] = useState(chatThreadId);
+
+  if(chatThreadId !== prevThreadId) {
+    setPrevTreadId(() => chatThreadId)
+
     if(chatThreadId) {
       getChatThreadById({id: chatThreadId}).then(ct => {
         setHistory(ct.thread)
@@ -78,16 +82,17 @@ export function useChatHistory(chatThreadId?: string) {
         setHistory([])
       })
     }
-  }, [chatThreadId])
+  }
 
   const commitMessageToServer = async (cm: StableChatMessage) => {
-    if(chatThreadId) {
+    if(chatThreadId && isAuthenticated) {
       await appendMessageToChatThreadById({
         chat_thread_id: chatThreadId,
         message: cm
       })
 
       if(!chatThreadExists.current) {
+        await renameThreadById({id: chatThreadId, name: cm.message})
         qc.invalidateQueries({queryKey: ["chatHistory"]})
         chatThreadExists.current = true
       }

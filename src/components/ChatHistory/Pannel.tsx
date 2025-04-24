@@ -14,13 +14,14 @@ export default function ChatHistoryPannel({
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const { data: chatThreads } = useChatHistoryForUser();
+  const chatHistoryContext = useContext(ChatHistoryContext)
 
   const handleLogout = async () => {
     await logout();
-    await queryClient.resetQueries();
+    queryClient.resetQueries();
+    chatHistoryContext.resetChatId()
   };
 
-  const chatHistoryContext = useContext(ChatHistoryContext)
 
   return (
     <Drawer.Root direction="right" open={open} onOpenChange={setOpen}>

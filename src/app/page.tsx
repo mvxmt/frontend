@@ -32,7 +32,7 @@ export default function Home() {
   const userInfo = useUserInfo();
 
   useEffect(() => {
-    if(window) {
+    if(typeof window !== undefined) {
       window.scrollTo(0, document.body.scrollHeight)
     }
   }, [streamingMessage, history])
@@ -86,7 +86,7 @@ export default function Home() {
         <div
           className={`mx-auto flex min-h-screen w-full max-w-xl flex-col justify-center ${history.length > 0 ? "justify-between" : "justify-center"} gap-[20px] font-sans text-secondary`}
         >
-          <AnimatePresence mode="popLayout">
+          <AnimatePresence>
             {history.length < 1 && (
               <motion.h1
                 exit={{ opacity: 0, position: "absolute" }}
