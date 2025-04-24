@@ -94,7 +94,7 @@ export function useChatHistory(chatThreadId?: string) {
   }
 
   const commitMessageToServer = async (cm: StableChatMessage) => {
-    if (chatThreadId && isAuthenticated) {
+    if (chatThreadId) {
       await appendMessageToChatThreadById({
         chat_thread_id: chatThreadId,
         message: cm,
@@ -110,7 +110,9 @@ export function useChatHistory(chatThreadId?: string) {
 
   const addToHistory = (cm: ChatMessage) => {
     setHistory((v) => [...v, cm]);
-    commitMessageToServer(cm as StableChatMessage);
+    if(isAuthenticated) {
+      commitMessageToServer(cm as StableChatMessage);
+    }
   };
 
   return { history, addToHistory };
