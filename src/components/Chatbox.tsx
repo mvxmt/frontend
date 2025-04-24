@@ -49,7 +49,7 @@ export const ChatBox: React.FC<{
   const chatHistoryContext = useContext(ChatHistoryContext)
 
   return (
-    <motion.div layout className="mb-4">
+    <motion.div layout layoutId="chatbox" className="mb-4">
       <form action={sendMessage} ref={ref}>
         <div className="mt-2 grid w-full flex-shrink-0 grid-cols-7 items-center justify-stretch justify-items-center gap-4 rounded-3xl bg-background-text">
           {isAuthenticated ? <PanelDrawer /> : null}

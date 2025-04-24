@@ -78,6 +78,7 @@ export function useChatHistory(chatThreadId?: string) {
   const [prevThreadId, setPrevTreadId] = useState(chatThreadId);
 
   if (chatThreadId !== prevThreadId) {
+    chatThreadExists.current = false
     setPrevTreadId(() => chatThreadId);
 
     if (chatThreadId) {

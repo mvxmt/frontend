@@ -109,7 +109,7 @@ export const deleteThreadById = getAuthenticatedRoute(
 );
 
 const renameThreadByIdSchema =threadByIdSchema.merge(z.object({
-  name: z.string().min(2)
+  name: z.string()
 }))
 
 export const renameThreadById = getAuthenticatedRoute(
