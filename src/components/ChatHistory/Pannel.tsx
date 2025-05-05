@@ -24,7 +24,7 @@ export default function ChatHistoryPannel({
 
 
   return (
-    <Drawer.Root direction="right" open={open} onOpenChange={setOpen}>
+    <Drawer.Root modal={false} direction="right" open={open} onOpenChange={setOpen}>
       <Drawer.Trigger asChild>{children}</Drawer.Trigger>
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0" />
