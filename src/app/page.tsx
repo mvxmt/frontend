@@ -32,7 +32,7 @@ export default function Home() {
   const userInfo = useUserInfo();
 
   useEffect(() => {
-    if(typeof window !== undefined) {
+    if (typeof window !== undefined) {
       window.scrollTo(0, document.body.scrollHeight)
     }
   }, [streamingMessage, history])
@@ -51,11 +51,40 @@ export default function Home() {
     formRef.current?.reset();
 
     startStreaming();
+    sendToken("check");
 
-    fetch("/api/chat/response", {
+    let res = await fetch("/api/chat/retrieve", {
       method: "POST",
       body: formData,
       headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const context = await res.json()
+
+    res = await fetch("/api/chat/grade", {
+      method: "POST",
+      body: JSON.stringify({
+        user_prompt: formData.get("user_prompt") as string,
+        context: context
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const approved = await res.json()
+
+    fetch("/api/chat/chat", {
+      method: "POST",
+      body: JSON.stringify({
+        user_prompt: formData.get("user_prompt") as string,
+        context: approved
+      }),
+      headers: {
+        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
     }).then((response) => {
@@ -96,7 +125,6 @@ export default function Home() {
               </motion.h1>
             )}
           </AnimatePresence>
-
           {history.length > 0 && (
             <div className="w-full max-w-4xl flex-1 overflow-y-auto p-6 lg:pt-24">
               <ChatThread
@@ -107,11 +135,11 @@ export default function Home() {
             </div>
           )}
           <div className="sticky bottom-0 z-10 bg-background w-full">
-          <div className="max-w-2xl mx-auto px-4">
-            <ChatBox
-              ref={formRef}
-              sendMessage={(d) => handleSubmit(token, d)}
-            />
+            <div className="max-w-2xl mx-auto px-4">
+              <ChatBox
+                ref={formRef}
+                sendMessage={(d) => handleSubmit(token, d)}
+              />
             </div>
           </div>
         </div>

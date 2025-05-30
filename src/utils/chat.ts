@@ -51,6 +51,7 @@ export function useTextStream({
   const start = () => {
     const store = getDefaultStore();
     store.set(ulidAtom, () => ulid());
+    store.set(streamingStringAtom, (sm) => [...sm, ""]);
     setIsStreaming(true);
   };
 
