@@ -59,16 +59,33 @@ export const getModelSettings = getAuthenticatedRoute(async (token) => {
     return json
   };
 
+  export const getGradingModels = async () => {
+    const res = await fetch("/api/chat/grading", {
+      headers: {
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error("failed to load user profile");
+    }
+    const json = await res.json()
+    return json
+  };
+
 export const zModelSettings = z.object({
     model: z.string(),
     distance: z.number(),
-    chunks: z.number()
+    chunks: z.number(),
+    grading:z.boolean(),
+    grading_model:z.string()
 });
 
 export const defaultSettings: ModelSettings = {
   model: "llama3.2:3b",
   distance: 5,
   chunks: 10,
+  grading:true,
+  grading_model:"gemma3:1b"
 };
 
 export type ModelSettings = z.infer<typeof zModelSettings>;

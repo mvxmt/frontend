@@ -52,7 +52,7 @@ export default function Home() {
 
     startStreaming();
 
-    fetch("/api/chat/response", {
+    fetch("/api/chat/chat", {
       method: "POST",
       body: formData,
       headers: {
