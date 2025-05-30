@@ -33,6 +33,7 @@ export default function SettingsDialog({ }) {
                 onSuccess(){
                     setOpen(false);
                     queryClient.invalidateQueries({ queryKey: ["modelSettings"] });
+                    queryClient.invalidateQueries({ queryKey: ["models"] });
                 }
             });
         }
