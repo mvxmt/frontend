@@ -16,7 +16,6 @@ export default function ChatHistoryPannel({
   const [open, setOpen] = useState(false);
   const { data: chatThreads } = useChatHistoryForUser();
   const chatHistoryContext = useContext(ChatHistoryContext)
-  const [models, setModels] = useState([]);
 
   const handleLogout = async () => {
     await logout();
