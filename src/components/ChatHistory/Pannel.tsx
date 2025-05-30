@@ -7,6 +7,7 @@ import React, { useContext, useState } from "react";
 import { Drawer } from "vaul";
 import ChatThreadSelector from "./ChatThreadSelector";
 import { ChatHistoryContext } from "./Context";
+import SettingsDialog from "./SettingsDialog";
 
 export default function ChatHistoryPannel({
   children,
@@ -53,13 +54,17 @@ export default function ChatHistoryPannel({
               </div>
             </div>
             <div className="flex h-screen w-full flex-col items-center justify-end">
-              <button
-                className="bg-background px-14 py-4 font-sans text-xl font-semibold text-secondary"
-                type="button"
-                onClick={handleLogout}
-              >
-                Logout
-              </button>
+              <div className="flex flex-row w-full justify-center items-center">
+                <div className="justify-start">
+                  <SettingsDialog />
+                </div>
+                <button
+                  className="mx-auto bg-background px-14 py-4 font-sans text-xl font-semibold text-secondary"
+                  type="button"
+                  onClick={handleLogout}>
+                  Logout
+                </button>
+              </div>
             </div>
           </div>
         </Drawer.Content>

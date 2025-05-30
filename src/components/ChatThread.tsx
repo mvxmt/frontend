@@ -1,5 +1,6 @@
 import type { ChatMessage } from "@/utils/chat";
 import { AnimatePresence, motion } from "motion/react";
+import ReactMarkdown from "react-markdown";
 
 const Message: React.FC<{ message: ChatMessage }> = ({ message }) => {
   return (
@@ -8,7 +9,9 @@ const Message: React.FC<{ message: ChatMessage }> = ({ message }) => {
       animate={{ transform: "translateY(0rem)" }}
       className={`rounded-xl bg-background-text p-4 ${message.role === "user" ? "self-end rounded-br-none" : "self-start rounded-bl-none"} max-w-5/12`}
     >
-      {message.message}
+      <ReactMarkdown>
+        {message.message}
+      </ReactMarkdown>
       {message.role === "loading" && (
         <div className="scale-[35%]">
           <span className="loader"></span>
@@ -36,7 +39,7 @@ export default function ChatThread({
         {pendingMessage.message.length > 0 ? (
           <Message key={pendingMessage.id} message={pendingMessage} />
         ) : isPendingMessage ? (
-          <Message key={pendingMessage.id} message={{...pendingMessage, role: "loading"}}></Message>
+          <Message key={pendingMessage.id} message={{ ...pendingMessage, role: "loading" }}></Message>
         ) : null}
       </AnimatePresence>
     </div>

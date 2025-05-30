@@ -84,7 +84,7 @@ export default function Home() {
     >
       <div className="flex min-h-screen flex-col items-center justify-center bg-background">
         <div
-          className={`mx-auto flex min-h-screen w-full max-w-xl flex-col justify-center ${history.length > 0 ? "justify-between" : "justify-center"} gap-[20px] font-sans text-secondary`}
+          className={`mx-auto flex min-h-screen w-full flex-col items-center ${history.length > 0 ? "justify-between" : "justify-center"} gap-[20px] font-sans text-secondary`}
         >
           <AnimatePresence>
             {history.length < 1 && (
@@ -98,7 +98,7 @@ export default function Home() {
           </AnimatePresence>
 
           {history.length > 0 && (
-            <div className="w-full flex-1 overflow-y-auto p-6 lg:pt-24">
+            <div className="w-full max-w-4xl flex-1 overflow-y-auto p-6 lg:pt-24">
               <ChatThread
                 pendingMessage={streamingMessage}
                 messageHistory={history}
@@ -106,11 +106,13 @@ export default function Home() {
               ></ChatThread>
             </div>
           )}
-          <div className="sticky bottom-0 z-10 bg-background">
+          <div className="sticky bottom-0 z-10 bg-background w-full">
+          <div className="max-w-2xl mx-auto px-4">
             <ChatBox
               ref={formRef}
               sendMessage={(d) => handleSubmit(token, d)}
-            ></ChatBox>
+            />
+            </div>
           </div>
         </div>
       </div>
