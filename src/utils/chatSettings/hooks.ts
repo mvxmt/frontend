@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { getModels, getModelSettings, saveUserSettings } from ".";
+import { getGradingModels, getModels, getModelSettings, saveUserSettings } from ".";
 import { ModelSettings } from ".";
 
 export const useModelSettings = () => {
@@ -17,6 +17,17 @@ export const useModels = () => {
     queryKey: ["models"],
     queryFn: async () => {
       return getModels();
+    },
+    enabled:false
+  });
+  return query;
+};
+
+export const useGradingModels = () => {
+  const query = useQuery({
+    queryKey: ["gradingModels"],
+    queryFn: async () => {
+      return getGradingModels();
     },
     enabled:false
   });
